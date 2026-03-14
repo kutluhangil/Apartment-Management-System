@@ -1,26 +1,31 @@
 const express = require('express');
-const db = require('../db/database');
+const { getAll, getOne, run } = require('../db/database');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const apartments = db.prepare('SELECT * FROM apartments ORDER BY number ASC').all([]);
-  res.json(apartments);
+router.get('/', async (req, res, next) => {
+  try {
+    const rows = await getAll('SELECT * FROM apartments ORDER BY number ASC');
+    res.json(rows);
+  } catch (err) { next(err); }
 });
 
-router.get('/:id', (req, res) => {
-  const apt = db.prepare('SELECT * FROM apartments WHERE id = ?').get([req.params.id]);
-  if (!apt) return res.status(404).json({ error: 'Daire bulunamadı.' });
-  res.json(apt);
+router.get('/:id', async (req, res, next) => {
+  try {
+    const apt = await getOne('SELECT * FROM apartments WHERE id = ?', [req.params.id]);
+    if (!apt) return res.status(404).json({ error: 'Daire bulunamadı.' });
+    res.json(apt);
+  } catch (err) { next(err); }
 });
 
-router.put('/:id', authenticateToken, (req, res) => {
-  const { owner_name, floor, notes } = req.body;
-  db.prepare('UPDATE apartments SET owner_name = ?, floor = ?, notes = ? WHERE id = ?').run([
-    owner_name, floor, notes, req.params.id
-  ]);
-  res.json({ success: true });
+router.put('/:id', authenticateToken, async (req, res, next) => {
+  try {
+    const { owner_name, floor, notes } = req.body;
+    await run('UPDATE apartments SET owner_name = ?, floor = ?, notes = ? WHERE id = ?',
+      [owner_name, floor, notes || null, req.params.id]);
+    res.json({ success: true });
+  } catch (err) { next(err); }
 });
 
 module.exports = router;

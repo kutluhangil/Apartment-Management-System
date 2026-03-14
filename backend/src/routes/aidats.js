@@ -1,73 +1,78 @@
 const express = require('express');
-const db = require('../db/database');
+const { getAll, getOne, run } = require('../db/database');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/', authenticateToken, (req, res) => {
-  const aidats = db.prepare('SELECT * FROM aidats ORDER BY year DESC, month DESC').all([]);
-  res.json(aidats);
-});
-
-router.get('/:id/payments', authenticateToken, (req, res) => {
-  const payments = db.prepare(`
-    SELECT ap.*, a.number as apartment_number, a.owner_name
-    FROM aidat_payments ap
-    JOIN apartments a ON ap.apartment_id = a.id
-    WHERE ap.aidat_id = ?
-    ORDER BY a.number ASC
-  `).all([req.params.id]);
-  res.json(payments);
-});
-
-router.post('/', authenticateToken, (req, res) => {
-  const { month, year, amount } = req.body;
-  if (!month || !year || !amount) {
-    return res.status(400).json({ error: 'Ay, yıl ve tutar gereklidir.' });
-  }
-
+router.get('/', authenticateToken, async (req, res, next) => {
   try {
-    const result = db.prepare('INSERT INTO aidats (month, year, amount) VALUES (?, ?, ?)').run([month, year, amount]);
-    const aidatId = result.lastInsertRowid;
+    res.json(await getAll('SELECT * FROM aidats ORDER BY year DESC, month DESC'));
+  } catch (err) { next(err); }
+});
 
-    const apartments = db.prepare('SELECT id FROM apartments').all([]);
-    const insertPayment = db.prepare('INSERT INTO aidat_payments (aidat_id, apartment_id, status) VALUES (?, ?, ?)');
+router.get('/:id/payments', authenticateToken, async (req, res, next) => {
+  try {
+    const rows = await getAll(`
+      SELECT ap.*, a.number as apartment_number, a.owner_name
+      FROM aidat_payments ap
+      JOIN apartments a ON ap.apartment_id = a.id
+      WHERE ap.aidat_id = ?
+      ORDER BY a.number ASC
+    `, [req.params.id]);
+    res.json(rows);
+  } catch (err) { next(err); }
+});
+
+router.post('/', authenticateToken, async (req, res, next) => {
+  try {
+    const { month, year, amount } = req.body;
+    if (!month || !year || !amount) return res.status(400).json({ error: 'Ay, yıl ve tutar gereklidir.' });
+
+    const existing = await getOne('SELECT id FROM aidats WHERE month = ? AND year = ?', [month, year]);
+    if (existing) return res.status(409).json({ error: 'Bu ay ve yıl için zaten aidat dönemi mevcut.' });
+
+    const { lastInsertRowid: aidatId } = await run(
+      'INSERT INTO aidats (month, year, amount) VALUES (?, ?, ?)', [month, year, amount]
+    );
+    const apartments = await getAll('SELECT id FROM apartments');
     for (const apt of apartments) {
-      insertPayment.run([aidatId, apt.id, 'unpaid']);
+      await run('INSERT INTO aidat_payments (aidat_id, apartment_id, status) VALUES (?, ?, ?)',
+        [aidatId, Number(apt.id), 'unpaid']);
     }
-
     res.status(201).json({ id: aidatId, month, year, amount });
-  } catch (err) {
-    if (err.message && err.message.includes('UNIQUE')) {
-      return res.status(409).json({ error: 'Bu ay ve yıl için zaten aidat dönemi mevcut.' });
-    }
-    throw err;
-  }
+  } catch (err) { next(err); }
 });
 
-router.put('/payments/:id', authenticateToken, (req, res) => {
-  const { status, note, paid_at } = req.body;
-  const paidAt = status === 'paid' ? (paid_at || new Date().toISOString()) : null;
-  db.prepare('UPDATE aidat_payments SET status = ?, note = ?, paid_at = ? WHERE id = ?').run([
-    status, note || null, paidAt, req.params.id
-  ]);
-  res.json({ success: true });
+router.put('/payments/:id', authenticateToken, async (req, res, next) => {
+  try {
+    const { status, note, paid_at } = req.body;
+    const paidAt = status === 'paid' ? (paid_at || new Date().toISOString()) : null;
+    await run('UPDATE aidat_payments SET status = ?, note = ?, paid_at = ? WHERE id = ?',
+      [status, note || null, paidAt, req.params.id]);
+    res.json({ success: true });
+  } catch (err) { next(err); }
 });
 
-router.get('/:id/stats', authenticateToken, (req, res) => {
-  const aidat = db.prepare('SELECT * FROM aidats WHERE id = ?').get([req.params.id]);
-  if (!aidat) return res.status(404).json({ error: 'Dönem bulunamadı.' });
+router.get('/:id/stats', authenticateToken, async (req, res, next) => {
+  try {
+    const aidat = await getOne('SELECT * FROM aidats WHERE id = ?', [req.params.id]);
+    if (!aidat) return res.status(404).json({ error: 'Dönem bulunamadı.' });
 
-  const stats = db.prepare(`
-    SELECT 
-      COUNT(*) as total,
-      SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_count,
-      SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
-      SUM(CASE WHEN status = 'unpaid' THEN 1 ELSE 0 END) as unpaid_count
-    FROM aidat_payments WHERE aidat_id = ?
-  `).get([req.params.id]);
+    const stats = await getOne(`
+      SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_count,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
+        SUM(CASE WHEN status = 'unpaid' THEN 1 ELSE 0 END) as unpaid_count
+      FROM aidat_payments WHERE aidat_id = ?
+    `, [req.params.id]);
 
-  res.json({ ...aidat, ...stats, collected: stats.paid_count * aidat.amount });
+    res.json({
+      ...Object.fromEntries(Object.entries(aidat)),
+      ...Object.fromEntries(Object.entries(stats)),
+      collected: Number(stats.paid_count) * Number(aidat.amount)
+    });
+  } catch (err) { next(err); }
 });
 
 module.exports = router;

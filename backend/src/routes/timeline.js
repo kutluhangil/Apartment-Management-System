@@ -1,26 +1,33 @@
 const express = require('express');
-const db = require('../db/database');
+const { getAll, run } = require('../db/database');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.json(db.prepare('SELECT * FROM timeline ORDER BY year ASC').all([]));
+router.get('/', async (req, res, next) => {
+  try {
+    res.json(await getAll('SELECT * FROM timeline ORDER BY year ASC'));
+  } catch (err) { next(err); }
 });
 
-router.post('/', authenticateToken, (req, res) => {
-  const { year, title, description, income, total_expense, maintenance_note, icon } = req.body;
+router.post('/', authenticateToken, async (req, res, next) => {
   try {
-    const result = db.prepare(
-      'INSERT INTO timeline (year, title, description, income, total_expense, maintenance_note, icon) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    ).run([year, title, description || '', income || 0, total_expense || 0, maintenance_note || '', icon || 'foundation']);
-    res.status(201).json({ id: result.lastInsertRowid });
-  } catch {
-    db.prepare(
-      'UPDATE timeline SET title=?, description=?, income=?, total_expense=?, maintenance_note=?, icon=? WHERE year=?'
-    ).run([title, description || '', income || 0, total_expense || 0, maintenance_note || '', icon || 'foundation', year]);
-    res.json({ success: true });
-  }
+    const { year, title, description, income, total_expense, maintenance_note, icon } = req.body;
+    try {
+      const { lastInsertRowid } = await run(
+        'INSERT INTO timeline (year, title, description, income, total_expense, maintenance_note, icon) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [year, title, description || '', income || 0, total_expense || 0, maintenance_note || '', icon || 'foundation']
+      );
+      res.status(201).json({ id: lastInsertRowid });
+    } catch {
+      // year already exists → update
+      await run(
+        'UPDATE timeline SET title=?, description=?, income=?, total_expense=?, maintenance_note=?, icon=? WHERE year=?',
+        [title, description || '', income || 0, total_expense || 0, maintenance_note || '', icon || 'foundation', year]
+      );
+      res.json({ success: true });
+    }
+  } catch (err) { next(err); }
 });
 
 module.exports = router;
