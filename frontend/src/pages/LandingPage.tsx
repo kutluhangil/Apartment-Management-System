@@ -38,7 +38,7 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background-light dark:to-background-dark z-10" />
           <div
             className="w-full h-full bg-cover bg-center opacity-30 dark:opacity-20"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1600&q=80')" }}
+            style={{ backgroundImage: "url('/hero.jpg')" }}
           />
         </div>
         <div className="relative z-20 text-center max-w-4xl mx-auto fade-in-up">
