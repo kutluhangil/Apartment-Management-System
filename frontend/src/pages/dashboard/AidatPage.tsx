@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { aidatsApi, expensesApi } from '../../api';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 const formatCurrency = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(n);
@@ -41,6 +44,59 @@ export default function AidatPage() {
     setSelectedAidat(aidat);
     aidatsApi.getPayments(aidat.id).then(r => setPayments(r.data)).catch(() => {});
     aidatsApi.getStats(aidat.id).then(r => setStats(r.data)).catch(() => {});
+  };
+
+  const exportPDF = () => {
+    try {
+      if (!selectedAidat) return toast.error('Lütfen bir aidat dönemi seçin.');
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text(`Cumhuriyet Apartmani Aidat Raporu`, 14, 22);
+      doc.setFontSize(12);
+      doc.text(`Donem: ${MONTHS[selectedAidat.month - 1]} ${selectedAidat.year}`, 14, 30);
+      
+      const tableData = payments.map(p => {
+        const s = statusConfig[p.status as keyof typeof statusConfig] || statusConfig.unpaid;
+        return [
+          `Daire ${p.apartment_number}`,
+          p.owner_name,
+          s.label,
+          p.paid_at ? new Date(p.paid_at).toLocaleDateString('tr-TR') : '-',
+          p.note || '-'
+        ];
+      });
+
+      autoTable(doc, {
+        startY: 36,
+        head: [['Daire No', 'Malik', 'Aidat Durumu', 'Odeme Tarihi', 'Not']],
+        body: tableData,
+      });
+
+      doc.save('Aidatlar_PDF.pdf');
+      toast.success('PDF başarıyla indirildi!');
+    } catch { toast.error('PDF oluşturulurken hata!'); }
+  };
+
+  const exportExcel = () => {
+    try {
+      if (!selectedAidat) return toast.error('Lütfen bir aidat dönemi seçin.');
+      const dataToExport = payments.map(p => {
+        const s = statusConfig[p.status as keyof typeof statusConfig] || statusConfig.unpaid;
+        return {
+          'Daire No': `Daire ${p.apartment_number}`,
+          'Malik': p.owner_name,
+          'Aidat Durumu': s.label,
+          'Ödeme Tarihi': p.paid_at ? new Date(p.paid_at).toLocaleDateString('tr-TR') : '-',
+          'Not': p.note || '-'
+        };
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Aidatlar');
+      XLSX.writeFile(workbook, 'Aidatlar_Excel.xlsx');
+      toast.success('Excel başarıyla indirildi!');
+    } catch { toast.error('Excel oluşturulurken hata!'); }
   };
 
   const handleStatusChange = async (paymentId: number, status: string) => {
@@ -138,15 +194,26 @@ export default function AidatPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Aidat table */}
         <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-wrap gap-2 items-center justify-between">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-wrap gap-4 items-center justify-between">
             <h3 className="font-bold">Aidat Durumları (18 Daire)</h3>
-            <div className="flex flex-wrap gap-1">
-              {aidats.slice(0, 6).map(a => (
-                <button key={a.id} onClick={() => selectAidat(a)}
-                  className={`text-xs font-medium px-3 py-1 rounded-full transition-colors ${selectedAidat?.id === a.id ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
-                  {MONTHS[a.month - 1]} {a.year}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap gap-1">
+                {aidats.slice(0, 6).map(a => (
+                  <button key={a.id} onClick={() => selectAidat(a)}
+                    className={`text-xs font-medium px-3 py-1 rounded-full transition-colors ${selectedAidat?.id === a.id ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                    {MONTHS[a.month - 1]} {a.year}
+                  </button>
+                ))}
+              </div>
+              <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+              <div className="flex gap-2">
+                <button onClick={exportPDF} className="flex items-center gap-1 px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 transition-colors">
+                  <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span> PDF İndir
                 </button>
-              ))}
+                <button onClick={exportExcel} className="flex items-center gap-1 px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 transition-colors">
+                  <span className="material-symbols-outlined text-[16px]">table_chart</span> Excel İndir
+                </button>
+              </div>
             </div>
           </div>
           <div className="overflow-x-auto">

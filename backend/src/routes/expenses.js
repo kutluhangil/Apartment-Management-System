@@ -28,15 +28,27 @@ const upload = multer({
 
 router.get('/', async (req, res, next) => {
   try {
-    const { type, page = 1, limit = 10 } = req.query;
+    const { type, month, page = 1, limit = 10 } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
-    const typeFilter = type ? 'WHERE type = ?' : '';
-    const args = type ? [type] : [];
+    
+    let filters = [];
+    let args = [];
+    
+    if (type) {
+      filters.push('type = ?');
+      args.push(type);
+    }
+    if (month) {
+      filters.push("date LIKE ?");
+      args.push(`${month}-%`);
+    }
 
-    const countRow = await getOne(`SELECT COUNT(*) as count FROM expenses ${typeFilter}`, args);
+    const whereClause = filters.length > 0 ? `WHERE ${filters.join(' AND ')}` : '';
+
+    const countRow = await getOne(`SELECT COUNT(*) as count FROM expenses ${whereClause}`, args);
     const total = Number(countRow.count);
     const expenses = await getAll(
-      `SELECT * FROM expenses ${typeFilter} ORDER BY date DESC LIMIT ? OFFSET ?`,
+      `SELECT * FROM expenses ${whereClause} ORDER BY date DESC LIMIT ? OFFSET ?`,
       [...args, parseInt(limit), offset]
     );
     res.json({ expenses, total, page: parseInt(page), totalPages: Math.ceil(total / parseInt(limit)) });

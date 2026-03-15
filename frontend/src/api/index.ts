@@ -54,7 +54,7 @@ export const aidatsApi = {
 
 // ─── Expenses ────────────────────────────────────────────────────────────────
 export const expensesApi = {
-  getAll: (params?: { type?: string; page?: number; limit?: number }) => api.get('/expenses', { params }),
+  getAll: (params?: { type?: string; month?: string; page?: number; limit?: number }) => api.get('/expenses', { params }),
   getSummary: () => api.get('/expenses/summary'),
   create: (formData: FormData) => api.post('/expenses', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
   delete: (id: number) => api.delete(`/expenses/${id}`),

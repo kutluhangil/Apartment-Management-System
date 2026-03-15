@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { expensesApi } from '../../api';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 const formatCurrency = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(n);
 
@@ -10,6 +13,7 @@ export default function ExpensePage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [summary, setSummary] = useState({ totalIncome: 0, totalExpense: 0, balance: 0 });
   const [filter, setFilter] = useState<string>('');
+  const [monthFilter, setMonthFilter] = useState<string>('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -18,9 +22,10 @@ export default function ExpensePage() {
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const fetchExpenses = () => {
-    expensesApi.getAll({ type: filter || undefined, page, limit: 10 }).then(r => {
+    expensesApi.getAll({ type: filter || undefined, month: monthFilter || undefined, page, limit: 10 }).then(r => {
       setExpenses(r.data.expenses);
       setTotal(r.data.total);
       setTotalPages(r.data.totalPages);
@@ -28,7 +33,54 @@ export default function ExpensePage() {
   };
 
   useEffect(() => { expensesApi.getSummary().then(r => setSummary(r.data)).catch(() => {}); }, []);
-  useEffect(() => { fetchExpenses(); }, [filter, page]);
+  useEffect(() => { fetchExpenses(); }, [filter, monthFilter, page]);
+
+  const exportPDF = async () => {
+    try {
+      setExporting(true);
+      const res = await expensesApi.getAll({ type: filter || undefined, month: monthFilter || undefined, limit: 10000 });
+      const dataToExport = res.data.expenses;
+      
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text('Cumhuriyet Apartmani Finansal Rapor', 14, 22);
+      
+      const tableData = dataToExport.map((exp: Expense) => [
+        exp.title,
+        new Date(exp.date).toLocaleDateString('tr-TR'),
+        `${exp.type === 'income' ? '+' : '-'}${formatCurrency(exp.amount)}`,
+        exp.description || '-'
+      ]);
+
+      autoTable(doc, {
+        startY: 30,
+        head: [['Baslik', 'Tarih', 'Tutar', 'Aciklama']],
+        body: tableData,
+      });
+
+      doc.save('Finansal_Rapor.pdf');
+      toast.success('PDF başarıyla indirildi!');
+    } catch { toast.error('PDF oluşturulurken hata!'); } finally { setExporting(false); }
+  };
+
+  const exportExcel = async () => {
+    try {
+      setExporting(true);
+      const res = await expensesApi.getAll({ type: filter || undefined, month: monthFilter || undefined, limit: 10000 });
+      const dataToExport = res.data.expenses.map((exp: Expense) => ({
+        'Başlık': exp.title,
+        'Tarih': new Date(exp.date).toLocaleDateString('tr-TR'),
+        'Tutar': `${exp.type === 'income' ? '+' : '-'}${exp.amount}`,
+        'Açıklama': exp.description || '-'
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'FinansalRapor');
+      XLSX.writeFile(workbook, 'Finansal_Rapor.xlsx');
+      toast.success('Excel başarıyla indirildi!');
+    } catch { toast.error('Excel oluşturulurken hata!'); } finally { setExporting(false); }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,11 +127,39 @@ export default function ExpensePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Table */}
         <div className="lg:col-span-8 space-y-4">
-          <div className="flex gap-2 flex-wrap">
-            {[['', 'Tümü'], ['expense', 'Giderler'], ['income', 'Gelirler']].map(([v, l]) => (
-              <button key={v} onClick={() => { setFilter(v); setPage(1); }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === v ? 'bg-primary text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>{l}</button>
-            ))}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex gap-2 flex-wrap">
+              {[['', 'Tümü'], ['expense', 'Giderler'], ['income', 'Gelirler']].map(([v, l]) => (
+                <button key={v} onClick={() => { setFilter(v); setPage(1); }} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === v ? 'bg-primary text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>{l}</button>
+              ))}
+            </div>
+            
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 focus-within:border-primary/50 transition-colors">
+                <span className="text-xs text-slate-500 whitespace-nowrap">Tarih Filtresi:</span>
+                <input 
+                  type="month" 
+                  value={monthFilter} 
+                  onChange={(e) => { setMonthFilter(e.target.value); setPage(1); }}
+                  className="bg-transparent text-sm focus:outline-none dark:text-slate-300 min-w-min"
+                />
+                {monthFilter && (
+                  <button onClick={() => { setMonthFilter(''); setPage(1); }} className="text-slate-400 hover:text-red-500 ml-1">
+                    <span className="material-symbols-outlined text-sm block">close</span>
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={exportPDF} disabled={exporting} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 disabled:opacity-50">
+                  <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
+                </button>
+                <button onClick={exportExcel} disabled={exporting} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 disabled:opacity-50">
+                  <span className="material-symbols-outlined text-[18px]">table_chart</span> Excel
+                </button>
+              </div>
+            </div>
           </div>
+          
           <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 overflow-hidden">
             <table className="w-full text-left">
               <thead>
