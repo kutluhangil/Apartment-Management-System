@@ -21,9 +21,9 @@ router.get('/:id', async (req, res, next) => {
 
 router.put('/:id', authenticateToken, async (req, res, next) => {
   try {
-    const { owner_name, floor, notes } = req.body;
-    await run('UPDATE apartments SET owner_name = ?, floor = ?, notes = ? WHERE id = ?',
-      [owner_name, floor, notes || null, req.params.id]);
+    const { owner_name, floor, profession, notes } = req.body;
+    await run('UPDATE apartments SET owner_name = ?, floor = ?, profession = ?, notes = ? WHERE id = ?',
+      [owner_name, floor, profession || null, notes || null, req.params.id]);
     res.json({ success: true });
   } catch (err) { next(err); }
 });

@@ -3,24 +3,24 @@ const bcrypt = require('bcryptjs');
 const { db, initDb } = require('./database');
 
 const apartments = [
-  { number: 1, owner_name: 'Turgut IRMAK', floor: 1 },
-  { number: 2, owner_name: 'GÖZDE BARIK', floor: 1 },
-  { number: 3, owner_name: 'Hakan ÇAKIR', floor: 1 },
-  { number: 4, owner_name: 'İLYAS GÜLERYÜZ', floor: 2 },
-  { number: 5, owner_name: 'A.Tahir ALTINSOY', floor: 2 },
-  { number: 6, owner_name: 'R. Tolunay GENÇ', floor: 2 },
-  { number: 7, owner_name: 'Hanife ŞEKER', floor: 3 },
-  { number: 8, owner_name: 'Kutluhan GUL', floor: 3 },
-  { number: 9, owner_name: 'SEVGİ AKKURT', floor: 3 },
-  { number: 10, owner_name: 'BORA DENIZ', floor: 4 },
-  { number: 11, owner_name: 'Bugra ÇAKIR', floor: 4 },
-  { number: 12, owner_name: 'KALI YAPI', floor: 4 },
-  { number: 13, owner_name: 'Murat ATAÇ', floor: 5 },
-  { number: 14, owner_name: 'Basri GÜZER', floor: 5 },
-  { number: 15, owner_name: 'Ebru Yeğin', floor: 5 },
-  { number: 16, owner_name: 'KALI YAPI', floor: 6 },
-  { number: 17, owner_name: 'KALİ YAPI', floor: 6 },
-  { number: 18, owner_name: 'Bahtiyar TURAN', floor: 6 },
+  { number: 1, owner_name: 'Turgut IRMAK', floor: 1, profession: 'Emekli', notes: '' },
+  { number: 2, owner_name: 'GÖZDE BARIK', floor: 1, profession: 'Öğretmen', notes: '' },
+  { number: 3, owner_name: 'Hakan ÇAKIR', floor: 1, profession: 'Mühendis', notes: '' },
+  { number: 4, owner_name: 'İLYAS GÜLERYÜZ', floor: 2, profession: 'Esnaf', notes: '' },
+  { number: 5, owner_name: 'A.Tahir ALTINSOY', floor: 2, profession: 'Doktor', notes: '' },
+  { number: 6, owner_name: 'R. Tolunay GENÇ', floor: 2, profession: 'Avukat', notes: 'Toplantılarda hukuki danışman' },
+  { number: 7, owner_name: 'Hanife ŞEKER', floor: 3, profession: 'Mimar', notes: '' },
+  { number: 8, owner_name: 'Kutluhan GUL', floor: 3, profession: 'Software Developer', notes: 'Sistem Yöneticisi' },
+  { number: 9, owner_name: 'SEVGİ AKKURT', floor: 3, profession: 'Muhasebeci', notes: '' },
+  { number: 10, owner_name: 'BORA DENIZ', floor: 4, profession: 'Pilot', notes: '' },
+  { number: 11, owner_name: 'Bugra ÇAKIR', floor: 4, profession: 'Öğrenci', notes: '' },
+  { number: 12, owner_name: 'KALI YAPI', floor: 4, profession: 'Şirket', notes: 'Kurumsal' },
+  { number: 13, owner_name: 'Murat ATAÇ', floor: 5, profession: 'Yönetici', notes: 'Apartman Yöneticisi' },
+  { number: 14, owner_name: 'Basri GÜZER', floor: 5, profession: 'Serbest Meslek', notes: '' },
+  { number: 15, owner_name: 'Ebru Yeğin', floor: 5, profession: 'Tasarımcı', notes: '' },
+  { number: 16, owner_name: 'KALI YAPI', floor: 6, profession: 'Şirket', notes: 'Kurumsal' },
+  { number: 17, owner_name: 'KALİ YAPI', floor: 6, profession: 'Şirket', notes: 'Kurumsal' },
+  { number: 18, owner_name: 'Bahtiyar TURAN', floor: 6, profession: 'Danışman', notes: '' },
 ];
 
 const exec = async (sql, args = []) => db.execute({ sql, args });
@@ -50,8 +50,8 @@ async function seed() {
 
   console.log('🏘 Seeding 18 apartments...');
   for (const apt of apartments) {
-    await exec(`INSERT OR IGNORE INTO apartments (number, owner_name, floor) VALUES (?, ?, ?)`,
-      [apt.number, apt.owner_name, apt.floor]);
+    await exec(`INSERT OR IGNORE INTO apartments (number, owner_name, floor, profession, notes) VALUES (?, ?, ?, ?, ?)`,
+      [apt.number, apt.owner_name, apt.floor, apt.profession, apt.notes]);
   }
 
   console.log('📜 Seeding timeline...');
