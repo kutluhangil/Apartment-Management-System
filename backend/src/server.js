@@ -28,6 +28,14 @@ app.use('/api/maintenance', require('./routes/maintenance'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', name: 'Cumhuriyet Apartmanı API' }));
 
+// ─── 404 Not Found handler ──────────────────────────────────────────────────────
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Endpoint bulunamadı: ' + req.originalUrl });
+  }
+  next();
+});
+
 // ─── Error handler ────────────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error(err.stack);

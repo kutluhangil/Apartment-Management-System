@@ -62,7 +62,12 @@ export default function DashboardLayout() {
         </div>
 
         <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
-          {navItems.map(item => {
+          {navItems.filter(item => {
+            if (user?.role === 'sakin') {
+              return ['/dashboard', '/dashboard/daireler', '/dashboard/duyurular', '/dashboard/belgeler'].includes(item.href);
+            }
+            return true;
+          }).map(item => {
             const active = item.exact
               ? location.pathname === item.href
               : location.pathname === item.href || location.pathname.startsWith(item.href + '/');

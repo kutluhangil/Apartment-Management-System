@@ -44,13 +44,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           {/* Protected Dashboard */}
           <Route path="/dashboard" element={<AuthGuard><DashboardLayout /></AuthGuard>}>
             <Route index element={<DashboardOverview />} />
-            <Route path="aidat" element={<AidatPage />} />
-            <Route path="gelir-gider" element={<ExpensePage />} />
-            <Route path="toplanti" element={<MeetingManagePage />} />
+            
+            {/* Manager/Admin only routes */}
+            <Route path="aidat" element={<AuthGuard allowedRoles={['admin', 'manager']}><AidatPage /></AuthGuard>} />
+            <Route path="gelir-gider" element={<AuthGuard allowedRoles={['admin', 'manager']}><ExpensePage /></AuthGuard>} />
+            <Route path="toplanti" element={<AuthGuard allowedRoles={['admin', 'manager']}><MeetingManagePage /></AuthGuard>} />
+            <Route path="bakim" element={<AuthGuard allowedRoles={['admin', 'manager']}><MaintenancePage /></AuthGuard>} />
+            
+            {/* Accessible to everyone (sakin included) */}
             <Route path="daireler" element={<ApartmentsPage />} />
             <Route path="duyurular" element={<AnnouncementsPage />} />
             <Route path="belgeler" element={<DocumentsPage />} />
-            <Route path="bakim" element={<MaintenancePage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
