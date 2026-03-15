@@ -9,9 +9,9 @@ const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağu
 const formatCurrency = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(n);
 
 const statusConfig = {
-  paid: { label: 'Ödendi', cls: 'bg-green-100 text-green-800' },
-  pending: { label: 'Beklemede', cls: 'bg-amber-100 text-amber-800' },
-  unpaid: { label: 'Ödenmedi', cls: 'bg-red-100 text-red-800' },
+  paid: { label: '🟢 Ödendi', cls: 'bg-emerald-100/80 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30' },
+  pending: { label: '🟡 Bekliyor', cls: 'bg-amber-100/80 text-amber-800 dark:bg-amber-500/20 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30' },
+  unpaid: { label: '🔴 Ödenmedi', cls: 'bg-red-100/80 text-red-800 dark:bg-red-500/20 dark:text-red-400 border border-red-200 dark:border-red-500/30' },
 };
 
 interface Payment { id: number; apartment_number: number; owner_name: string; status: string; note: string; paid_at: string; }

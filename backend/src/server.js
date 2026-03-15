@@ -22,6 +22,10 @@ app.use('/api/aidats', require('./routes/aidats'));
 app.use('/api/expenses', require('./routes/expenses'));
 app.use('/api/meetings', require('./routes/meetings'));
 app.use('/api/timeline', require('./routes/timeline'));
+app.use('/api/announcements', require('./routes/announcements'));
+app.use('/api/documents', require('./routes/documents'));
+app.use('/api/maintenance', require('./routes/maintenance'));
+app.use('/api/analytics', require('./routes/analytics'));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', name: 'Cumhuriyet Apartmanı API' }));
 
 // ─── Error handler ────────────────────────────────────────────────────────────

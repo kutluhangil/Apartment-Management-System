@@ -34,12 +34,11 @@ export const apartmentsApi = {
   getAll: () => api.get('/apartments'),
   update: (id: number, data: object) => api.put(`/apartments/${id}`, data),
   uploadPhoto: (id: number, file: File) => {
-    const formData = new FormData();
-    formData.append('photo', file);
-    return api.post(`/apartments/${id}/photo`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-  }
+    const fd = new FormData();
+    fd.append('photo', file);
+    return api.post(`/apartments/${id}/photo`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
+  getAidatHistory: (id: number) => api.get(`/apartments/${id}/aidats`),
 };
 
 // ─── Aidats ──────────────────────────────────────────────────────────────────
@@ -71,4 +70,27 @@ export const meetingsApi = {
 // ─── Timeline ────────────────────────────────────────────────────────────────
 export const timelineApi = {
   getAll: () => api.get('/timeline'),
+};
+
+// ─── Analytics & Advanced ───────────────────────────────────────────────────
+export const analyticsApi = {
+  getDashboardStats: () => api.get('/analytics'),
+};
+
+export const announcementsApi = {
+  getAll: () => api.get('/announcements'),
+  create: (data: any) => api.post('/announcements', data),
+  delete: (id: number) => api.delete(`/announcements/${id}`),
+};
+
+export const documentsApi = {
+  getAll: () => api.get('/documents'),
+  create: (formData: FormData) => api.post('/documents', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  delete: (id: number) => api.delete(`/documents/${id}`),
+};
+
+export const maintenanceApi = {
+  getAll: () => api.get('/maintenance'),
+  create: (data: any) => api.post('/maintenance', data),
+  delete: (id: number) => api.delete(`/maintenance/${id}`),
 };

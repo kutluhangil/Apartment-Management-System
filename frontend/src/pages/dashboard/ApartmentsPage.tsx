@@ -9,6 +9,8 @@ export default function ApartmentsPage() {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Apartment | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [historyApt, setHistoryApt] = useState<Apartment | null>(null);
+  const [historyData, setHistoryData] = useState<any[]>([]);
 
   useEffect(() => {
     apartmentsApi.getAll().then(r => setApartments(r.data)).catch(() => {});
@@ -18,6 +20,17 @@ export default function ApartmentsPage() {
     a.owner_name.toLowerCase().includes(search.toLowerCase()) ||
     String(a.number).includes(search)
   );
+
+  const handleViewHistory = async (apt: Apartment) => {
+    setHistoryApt(apt);
+    setHistoryData([]);
+    try {
+      const res = await apartmentsApi.getAidatHistory(apt.id);
+      setHistoryData(res.data);
+    } catch {
+      toast.error('Gemiş yüklenemedi.');
+    }
+  };
 
   const handleSave = async () => {
     if (!editing) return;
@@ -69,7 +82,7 @@ export default function ApartmentsPage() {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map(apt => (
-          <div key={apt.id} className="relative group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div key={apt.id} onClick={() => handleViewHistory(apt)} className="cursor-pointer relative group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-xl hover:scale-105 transition-all duration-300 transform">
             <div className="flex items-start justify-between mb-3 relative z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
@@ -80,7 +93,7 @@ export default function ApartmentsPage() {
                   <p className="text-xs text-slate-500">Kat {apt.floor} · Daire {apt.number}</p>
                 </div>
               </div>
-              <button onClick={() => setEditing({ ...apt })} className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
+              <button onClick={(e) => { e.stopPropagation(); setEditing({ ...apt }); }} className="p-1.5 z-20 relative text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
                 <span className="material-symbols-outlined text-lg">edit</span>
               </button>
             </div>
@@ -162,6 +175,48 @@ export default function ApartmentsPage() {
               <textarea className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" rows={3} value={editing.notes || ''} onChange={e => setEditing(p => p ? ({ ...p, notes: e.target.value }) : null)} />
             </div>
             <button onClick={handleSave} className="w-full bg-primary text-white py-2.5 rounded-lg font-bold hover:opacity-90">Kaydet</button>
+          </div>
+        </div>
+      )}
+
+      {/* History modal */}
+      {historyApt && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setHistoryApt(null)}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div>
+                <h3 className="font-bold text-lg">Daire {historyApt.number}</h3>
+                <p className="text-xs text-slate-500">Aidat Geçmişi</p>
+              </div>
+              <button onClick={() => setHistoryApt(null)} className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                <span className="material-symbols-outlined text-sm">close</span>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto pr-2 space-y-3">
+              {historyData.length > 0 ? historyData.map((record, i) => (
+                <div key={i} className="flex items-center justify-between p-3.5 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-800/20">
+                  <div>
+                    <p className="font-bold text-sm">{record.month} {record.year}</p>
+                    <p className="text-xs text-slate-500 mt-1">{record.paid_at ? new Date(record.paid_at).toLocaleDateString('tr-TR') : 'Tarih Yok'}</p>
+                  </div>
+                  <div className="text-right flex flex-col items-end">
+                    <p className="font-bold text-sm mb-1">{new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(record.amount || 0)}</p>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                      record.status === 'paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
+                      record.status === 'pending' ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400' :
+                      'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
+                    }`}>
+                      {record.status === 'paid' ? 'ÖDENDİ' : record.status === 'pending' ? 'BEKLİYOR' : 'ÖDENMEDİ'}
+                    </span>
+                  </div>
+                </div>
+              )) : (
+                <div className="text-center text-slate-500 py-10 flex flex-col items-center">
+                  <span className="material-symbols-outlined text-4xl mb-2 opacity-50">receipt_long</span>
+                  <p className="text-sm">Aidat geçmişi bulunmuyor.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

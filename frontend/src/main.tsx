@@ -19,6 +19,11 @@ import ExpensePage from './pages/dashboard/ExpensePage';
 import MeetingManagePage from './pages/dashboard/MeetingManagePage';
 import ApartmentsPage from './pages/dashboard/ApartmentsPage';
 
+// New Modules
+import AnnouncementsPage from './pages/dashboard/AnnouncementsPage';
+import DocumentsPage from './pages/dashboard/DocumentsPage';
+import MaintenancePage from './pages/dashboard/MaintenancePage';
+
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -43,6 +48,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="gelir-gider" element={<ExpensePage />} />
             <Route path="toplanti" element={<MeetingManagePage />} />
             <Route path="daireler" element={<ApartmentsPage />} />
+            <Route path="duyurular" element={<AnnouncementsPage />} />
+            <Route path="belgeler" element={<DocumentsPage />} />
+            <Route path="bakim" element={<MaintenancePage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

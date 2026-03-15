@@ -8,3 +8,220 @@
 [33m[nodemon] watching extensions: js,mjs,cjs,json[39m
 [32m[nodemon] starting `node src/server.js`[39m
 🚀 Cumhuriyet Apartmanı API çalışıyor: http://localhost:3001
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+🚀 Cumhuriyet Apartmanı API çalışıyor: http://localhost:3001
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+🚀 Cumhuriyet Apartmanı API çalışıyor: http://localhost:3001
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+🚀 Cumhuriyet Apartmanı API çalışıyor: http://localhost:3001
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+🚀 Cumhuriyet Apartmanı API çalışıyor: http://localhost:3001
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+🚀 Cumhuriyet Apartmanı API çalışıyor: http://localhost:3001
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:22
+      [req.user.id, 'CREATE', 'announcement', \`Duyuru Eklendi: \${title}\`]);
+                                              ^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+    at Module._compile (node:internal/modules/cjs/loader:1735:20)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[32m[nodemon] restarting due to changes...[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13
+router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
+                                    ^
+
+TypeError: authorizeRole is not a function
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/routes/announcements.js:13:37)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/Users/kutluhangil/Desktop/Projects/Personal Projects/Apartment-Management-System/backend/src/server.js:25:31)
+
+Node.js v24.12.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m

@@ -7,6 +7,8 @@ interface TimelineEntry {
   id: number;
   year: number;
   title: string;
+  description?: string;
+  image_path?: string;
   income: number;
   total_expense: number;
   maintenance_note: string;
@@ -21,9 +23,9 @@ export default function LandingPage() {
   useEffect(() => {
     timelineApi.getAll().then(r => setTimeline(r.data)).catch(() => {
       setTimeline([
-        { id: 1, year: 2024, title: 'İnşaat Tamamlandı', income: 0, total_expense: 5000000, maintenance_note: 'Yok', icon: 'foundation' },
-        { id: 2, year: 2025, title: 'Bakım İyileştirmeleri', income: 200000, total_expense: 50000, maintenance_note: 'Boya ve Çatı', icon: 'architecture' },
-        { id: 3, year: 2026, title: 'Mevcut Finansal Durum', income: 100000, total_expense: 20000, maintenance_note: 'Bahçe Düzenleme', icon: 'account_balance_wallet' },
+        { id: 1, year: 2024, title: 'İnşaat Tamamlandı', description: 'Apartman yapım aşaması ve iskan.', income: 0, total_expense: 5000000, maintenance_note: 'Yok', icon: 'foundation' },
+        { id: 2, year: 2025, title: 'Bakım İyileştirmeleri', description: 'Dış cephe yenileme.', income: 200000, total_expense: 50000, maintenance_note: 'Boya ve Çatı', icon: 'architecture' },
+        { id: 3, year: 2026, title: 'Mevcut Finansal Durum', description: 'Yeni yönetim devri.', income: 100000, total_expense: 20000, maintenance_note: 'Bahçe Düzenleme', icon: 'account_balance_wallet' },
       ]);
     });
   }, []);
@@ -84,6 +86,12 @@ export default function LandingPage() {
                       <span className="material-symbols-outlined text-primary">{entry.icon}</span>
                     </div>
                     <h3 className="text-xl font-bold mb-4">{entry.title}</h3>
+                    {entry.image_path && (
+                      <div className="w-full h-32 rounded-lg mb-4 overflow-hidden border border-slate-100 dark:border-slate-800">
+                        <img src={`/api${entry.image_path}`} alt={entry.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    {entry.description && <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">{entry.description}</p>}
                     <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
                       <div className="flex justify-between border-b border-primary/5 pb-2">
                         <span>Gelir:</span>

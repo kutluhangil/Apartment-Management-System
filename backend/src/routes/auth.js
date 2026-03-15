@@ -5,8 +5,18 @@ const { getOne } = require('../db/database');
 const { JWT_SECRET } = require('../middleware/auth');
 
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
 
-router.post('/login', async (req, res, next) => {
+// Rate limiting for login
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 login requests per `window` (here, per 15 minutes)
+  message: { error: 'Çok fazla giriş denemesi yapıldı, lütfen daha sonra tekrar deneyin.' },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+router.post('/login', loginLimiter, async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'E-posta ve şifre gereklidir.' });
