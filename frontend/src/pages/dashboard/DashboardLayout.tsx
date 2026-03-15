@@ -123,11 +123,11 @@ export default function DashboardLayout() {
             {user && (
               <div className="flex items-center gap-3 border-l border-slate-200 dark:border-slate-800 pl-4">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold leading-none">{user.name}</p>
-                  <p className="text-[11px] text-slate-500 font-medium mt-0.5 uppercase tracking-wider">{user.role === 'admin' ? 'Yönetici Admin' : 'Sakin'}</p>
+                  <p className="text-sm font-bold leading-none">{user?.name || 'Kullanıcı'}</p>
+                  <p className="text-[11px] text-slate-500 font-medium mt-0.5 uppercase tracking-wider">{user?.role === 'admin' ? 'Yönetici Admin' : 'Sakin'}</p>
                 </div>
                 <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-purple-600 flex items-center justify-center text-white shadow-sm font-bold text-sm">
-                  {user.name.charAt(0)}
+                  {user?.name ? user.name.charAt(0).toUpperCase() : '?'}
                 </div>
               </div>
             )}

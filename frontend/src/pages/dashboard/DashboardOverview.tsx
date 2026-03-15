@@ -31,7 +31,7 @@ export default function DashboardOverview() {
     <div className="p-6 md:p-8 space-y-8">
       {/* Welcome */}
       <div>
-        <h1 className="text-3xl font-black tracking-tight">Hoş geldiniz, {user?.name?.split(' ')[0]} 👋</h1>
+        <h1 className="text-3xl font-black tracking-tight">Hoş geldiniz, {user?.name ? user.name.split(' ')[0] : ''} 👋</h1>
         <p className="text-slate-500 mt-1">Cumhuriyet Apartmanı yönetim paneli özeti</p>
       </div>
 
@@ -105,7 +105,7 @@ export default function DashboardOverview() {
               )}
             </div>
             <div className="mt-4 space-y-2">
-              {analytics?.expenseDistribution?.slice(0, 3).map((item: any, i: number) => (
+              {analytics?.expenseDistribution && analytics.expenseDistribution.slice(0, 3).map((item: any, i: number) => (
                 <div key={i} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
