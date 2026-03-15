@@ -6,7 +6,7 @@ router.get('/', async (req, res, next) => {
   try {
     // 1. Monthly Income vs Expense Chart (Current Year)
     const currentYear = new Date().getFullYear().toString();
-    const monthlyDataRaw = await getAll(\`
+    const monthlyDataRaw = await getAll(`
       SELECT 
         strftime('%m', date) as month,
         type,
@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
       FROM expenses
       WHERE date LIKE ?
       GROUP BY month, type
-    \`, [\`\${currentYear}-%\`]);
+    `, [`${currentYear}-%`]);
 
     const formattedMonthlyData = Array.from({length: 12}, (_, i) => {
       const monthStr = String(i + 1).padStart(2, '0');
@@ -30,7 +30,7 @@ router.get('/', async (req, res, next) => {
     });
 
     // 2. Expense Distribution Pie Chart (by title/description grouping or just title if simple)
-    const distributionRaw = await getAll(\`
+    const distributionRaw = await getAll(`
       SELECT 
         title as category,
         SUM(amount) as value
@@ -39,7 +39,7 @@ router.get('/', async (req, res, next) => {
       GROUP BY category
       ORDER BY value DESC
       LIMIT 6
-    \`);
+    `);
 
     // 3. Aidat Payment Rate
     // To get payment rate, we need to see how many unique apartments paid for the current month vs total apartments (18)
@@ -50,28 +50,28 @@ router.get('/', async (req, res, next) => {
     let paymentRate = 0;
     let paidCount = 0;
     if (currentAidatPeriod) {
-        const paidResult = await getOne(\`
+        const paidResult = await getOne(`
           SELECT COUNT(*) as count FROM aidat_payments 
           WHERE aidat_id = ? AND status = 'paid'
-        \`, [currentAidatPeriod.id]);
+        `, [currentAidatPeriod.id]);
         paidCount = paidResult.count;
         paymentRate = Math.round((paidCount / 18) * 100);
     }
 
     // 4. Financial Insights (Aylık Ortalama Gider, En Büyük Gider Türü, Toplam Aidat Geliri)
-    const avgExpenseRes = await getOne(\`
+    const avgExpenseRes = await getOne(`
       SELECT AVG(monthly_total) as average FROM (
         SELECT SUM(amount) as monthly_total FROM expenses WHERE type = 'expense' GROUP BY strftime('%Y-%m', date)
       )
-    \`);
+    `);
 
-    const biggestExpenseRes = await getOne(\`
+    const biggestExpenseRes = await getOne(`
       SELECT title, SUM(amount) as total FROM expenses WHERE type = 'expense' GROUP BY title ORDER BY total DESC LIMIT 1
-    \`);
+    `);
 
-    const totalAidatIncomeRes = await getOne(\`
+    const totalAidatIncomeRes = await getOne(`
       SELECT SUM(amount) as total FROM expenses WHERE type = 'income' AND title LIKE '%Aidat%'
-    \`);
+    `);
 
     res.json({
       monthlyData: formattedMonthlyData,
