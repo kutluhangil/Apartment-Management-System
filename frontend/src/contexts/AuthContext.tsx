@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import api from '../api';
 
 interface User {
   id: number;
@@ -9,44 +10,44 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
-  login: (token: string, user: User) => void;
+  login: (user: User) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    try {
-      const stored = localStorage.getItem('user');
-      if (!stored || stored === 'undefined') return null;
-      return JSON.parse(stored);
-    } catch (e) {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      return null;
-    }
-  });
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // True until /auth/me resolves
 
-  const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
-    setToken(newToken);
+  // On mount: verify session with the server via httpOnly cookie.
+  // If the cookie is valid, the server returns the user object.
+  // This is the ONLY source of truth — no localStorage token.
+  useEffect(() => {
+    api.get('/auth/me')
+      .then(res => setUser(res.data.user))
+      .catch(() => setUser(null))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const login = (newUser: User) => {
+    // Token is stored in httpOnly cookie by the server — we only track user info here.
     setUser(newUser);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // Even if the server call fails, clear local state
+    }
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated: !!token && !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

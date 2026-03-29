@@ -5,19 +5,19 @@ import { authApi } from '../api';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPage() {
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isLoading && isAuthenticated) {
       navigate('/dashboard', { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isLoading, navigate]);
 
-  if (isAuthenticated) {
-    return null; // Return nothing while redirecting
+  if (isLoading || isAuthenticated) {
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +29,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const res = await authApi.login(form.email, form.password);
-      login(res.data.token, res.data.user);
+      // Cookie is set automatically by the server — we only receive user info
+      login(res.data.user);
       toast.success(`Hoş geldiniz, ${res.data.user.name}!`);
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
@@ -41,14 +42,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background-light dark:bg-background-dark px-5">
-      {/* Back to home */}
       <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors">
         <span className="material-symbols-outlined text-lg">arrow_back</span>
         Ana Sayfa
       </Link>
 
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-10">
           <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="material-symbols-outlined text-white text-3xl">apartment</span>
@@ -57,7 +56,6 @@ export default function LoginPage() {
           <p className="text-slate-500 text-sm mt-1">Yönetici Paneli</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-8 space-y-5">
           <div>
             <label className="block text-sm font-medium mb-2">E-posta</label>
@@ -91,12 +89,6 @@ export default function LoginPage() {
             ) : 'Giriş Yap'}
           </button>
         </form>
-
-        {/* Hint */}
-        <div className="mt-6 text-center text-xs text-slate-400 space-y-1">
-          <p>Yönetici: murat@cumhuriyet.com</p>
-          <p>Admin: kutluhan@cumhuriyet.com</p>
-        </div>
       </div>
     </div>
   );

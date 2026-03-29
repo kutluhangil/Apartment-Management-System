@@ -3,7 +3,7 @@ const { getAll, getOne, run } = require('../db/database');
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
+router.get('/', authenticateToken, async (req, res, next) => {
   try {
     const announcements = await getAll('SELECT * FROM announcements ORDER BY date DESC');
     res.json(announcements);

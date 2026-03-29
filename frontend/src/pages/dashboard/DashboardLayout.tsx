@@ -38,8 +38,8 @@ export default function DashboardLayout() {
     }
   }, [isDark]);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast.success('Çıkış yapıldı.');
     navigate('/giris', { replace: true });
   };

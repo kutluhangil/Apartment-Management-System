@@ -1,22 +1,19 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '/api' });
-
-// Attach JWT token to every request
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+const api = axios.create({
+  baseURL: '/api',
+  withCredentials: true, // Required: sends httpOnly cookie on every request
 });
 
-// Handle 401 - clear token and redirect to login
+// Handle 401 globally — redirect to login when session expires
 api.interceptors.response.use(
   res => res,
   err => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/giris';
+      // Only redirect if not already on the login page
+      if (!window.location.pathname.startsWith('/giris')) {
+        window.location.href = '/giris';
+      }
     }
     return Promise.reject(err);
   }
@@ -27,6 +24,8 @@ export default api;
 // ─── Auth ───────────────────────────────────────────────────────────────────
 export const authApi = {
   login: (email: string, password: string) => api.post('/auth/login', { email, password }),
+  logout: () => api.post('/auth/logout'),
+  me: () => api.get('/auth/me'),
 };
 
 // ─── Apartments ──────────────────────────────────────────────────────────────
@@ -72,7 +71,7 @@ export const timelineApi = {
   getAll: () => api.get('/timeline'),
 };
 
-// ─── Analytics & Advanced ───────────────────────────────────────────────────
+// ─── Analytics ───────────────────────────────────────────────────────────────
 export const analyticsApi = {
   getDashboardStats: () => api.get('/analytics'),
 };

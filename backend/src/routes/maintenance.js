@@ -3,7 +3,7 @@ const { getAll, getOne, run } = require('../db/database');
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
+router.get('/', authenticateToken, async (req, res, next) => {
   try {
     const records = await getAll('SELECT * FROM maintenance ORDER BY next_maintenance_date ASC');
     res.json(records);

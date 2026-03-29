@@ -1,16 +1,52 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const { initDb } = require('./db/database');
 
 const app = express();
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
-const allowedOrigins = process.env.FRONTEND_URL
-  ? [process.env.FRONTEND_URL, 'http://localhost:5173']
-  : ['http://localhost:5173'];
+// ─── Trust proxy (required for correct IP behind Cloudflare Tunnel) ───────────
+// Without this, req.ip is the tunnel loopback and rate limiting is broken.
+app.set('trust proxy', 1);
 
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+// ─── Security headers (helmet) ────────────────────────────────────────────────
+app.use(helmet({
+  crossOriginEmbedderPolicy: false, // Allow image/file embeds from uploads
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"], // Inline styles needed for React
+      imgSrc: ["'self'", 'data:', 'blob:', '*.public.blob.vercel-storage.com'],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'", 'fonts.gstatic.com'],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+}));
+
+// ─── CORS ──────────────────────────────────────────────────────────────────────
+// In production, only the FRONTEND_URL is allowed. localhost never appears in prod.
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.FRONTEND_URL].filter(Boolean)
+  : ['http://localhost:5173', 'http://localhost:4173'];
+
+if (process.env.NODE_ENV === 'production' && !process.env.FRONTEND_URL) {
+  console.error('FATAL: FRONTEND_URL environment variable is not set in production mode. Refusing to start.');
+  process.exit(1);
+}
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true, // Required for cookies to be sent cross-origin
+}));
+
+// ─── Middleware ───────────────────────────────────────────────────────────────
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -28,7 +64,7 @@ app.use('/api/maintenance', require('./routes/maintenance'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', name: 'Cumhuriyet Apartmanı API' }));
 
-// ─── 404 Not Found handler ──────────────────────────────────────────────────────
+// ─── 404 Not Found handler ────────────────────────────────────────────────────
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'Endpoint bulunamadı: ' + req.originalUrl });
@@ -36,14 +72,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// ─── Error handler ────────────────────────────────────────────────────────────
+// ─── Global error handler ─────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({ error: err.message || 'Sunucu hatası oluştu.' });
 });
 
 // ─── Boot ──────────────────────────────────────────────────────────────────────
-// initDb() is called once at startup (schema creation)
 const startServer = async () => {
   await initDb();
   const PORT = process.env.PORT || 3001;
@@ -52,8 +87,6 @@ const startServer = async () => {
   });
 };
 
-// In Vercel (serverless) we just export the app.
-// When running locally (node src/server.js), we start the server.
 if (require.main === module) {
   startServer();
 }

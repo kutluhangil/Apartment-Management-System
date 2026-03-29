@@ -15,7 +15,7 @@ const upload = multer({
   }
 });
 
-router.get('/', async (req, res, next) => {
+router.get('/', authenticateToken, async (req, res, next) => {
   try {
     const docs = await getAll('SELECT * FROM documents ORDER BY upload_date DESC');
     res.json(docs);
