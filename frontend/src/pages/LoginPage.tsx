@@ -8,7 +8,17 @@ export default function LoginPage() {
   const { login, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedEmail && savedPassword) {
+      setForm({ email: savedEmail, password: savedPassword });
+      setRememberMe(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -30,6 +40,13 @@ export default function LoginPage() {
     try {
       const res = await authApi.login(form.email, form.password);
       // Cookie is set automatically by the server — we only receive user info
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', form.email);
+        localStorage.setItem('rememberedPassword', form.password);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberedPassword');
+      }
       login(res.data.user);
       toast.success(`Hoş geldiniz, ${res.data.user.name}!`);
       navigate('/dashboard', { replace: true });
@@ -79,6 +96,20 @@ export default function LoginPage() {
               autoComplete="current-password"
             />
           </div>
+          
+          <div className="flex items-center">
+            <input
+              id="remember-me"
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="h-4 w-4 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded text-primary focus:ring-primary/30"
+            />
+            <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
+              Şifreyi hatırla
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -89,6 +120,11 @@ export default function LoginPage() {
             ) : 'Giriş Yap'}
           </button>
         </form>
+
+        <div className="mt-8 text-center text-xs text-slate-400 dark:text-slate-500 space-y-1">
+          <p>Yönetici: murat@cumhuriyet.com (3434murat)</p>
+          <p>Admin: admin@cumhuriyet.com (095321Admin.)</p>
+        </div>
       </div>
     </div>
   );
