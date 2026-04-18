@@ -1,0 +1,35 @@
+name: Deploy to Home Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull latest code
+        run: |
+          cd /home/kutluhan/Apartment-Management-System
+          git pull
+
+      - name: Rebuild backend (if changed)
+        run: |
+          cd /home/kutluhan/Apartment-Management-System
+          git diff --name-only HEAD~1 HEAD | grep -q "^backend/" && \
+            docker compose up -d --build backend || \
+            echo "⏭ Backend değişmedi, atlandı."
+
+      - name: Rebuild frontend (if changed)
+        run: |
+          cd /home/kutluhan/Apartment-Management-System
+          git diff --name-only HEAD~1 HEAD | grep -q "^frontend/" && \
+            docker compose up -d --build frontend || \
+            echo "⏭ Frontend değişmedi, atlandı."
+
+      - name: Verify containers are healthy
+        run: |
+          sleep 5
+          docker ps --filter "name=cumhuriyet" --format "{{.Names}}: {{.Status}}"
