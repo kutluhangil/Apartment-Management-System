@@ -4,7 +4,7 @@ const { authenticateToken, authorizeRole } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     res.json(await getAll('SELECT * FROM timeline ORDER BY year ASC'));
   } catch (err) { next(err); }

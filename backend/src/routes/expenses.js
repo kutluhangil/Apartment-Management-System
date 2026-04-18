@@ -32,7 +32,7 @@ const upload = multer({
   }
 });
 
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const { type, month, page = 1, limit = 10 } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
@@ -61,7 +61,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.get('/summary', authenticateToken, async (req, res, next) => {
+router.get('/summary', async (req, res, next) => {
   try {
     const income = await getOne(`SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE type = 'income'`);
     const expense = await getOne(`SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE type = 'expense'`);
