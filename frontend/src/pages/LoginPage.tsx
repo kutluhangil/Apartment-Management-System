@@ -13,9 +13,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
-    const savedPassword = localStorage.getItem('rememberedPassword');
-    if (savedEmail && savedPassword) {
-      setForm({ email: savedEmail, password: savedPassword });
+    if (savedEmail) {
+      setForm(f => ({ ...f, email: savedEmail }));
       setRememberMe(true);
     }
   }, []);
@@ -42,11 +41,10 @@ export default function LoginPage() {
       // Cookie is set automatically by the server — we only receive user info
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', form.email);
-        localStorage.setItem('rememberedPassword', form.password);
       } else {
         localStorage.removeItem('rememberedEmail');
-        localStorage.removeItem('rememberedPassword');
       }
+      localStorage.removeItem('rememberedPassword'); // Eski güvensiz kaydı temizle
       login(res.data.user);
       toast.success(`Hoş geldiniz, ${res.data.user.name}!`);
       navigate('/dashboard', { replace: true });

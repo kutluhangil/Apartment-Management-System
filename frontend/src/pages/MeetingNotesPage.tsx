@@ -42,7 +42,8 @@ export default function MeetingNotesPage() {
 
   useEffect(() => { fetchMeetings(); }, [activeYear, page]);
 
-  const years = ['all', '2024', '2023'];
+  const currentYear = new Date().getFullYear();
+  const years = ['all', ...Array.from({ length: currentYear - 2022 }, (_, i) => String(currentYear - i))];
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">

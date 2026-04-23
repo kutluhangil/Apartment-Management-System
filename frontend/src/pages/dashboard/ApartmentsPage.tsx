@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { apartmentsApi } from '../../api';
 import toast from 'react-hot-toast';
 
+const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
 interface Apartment { id: number; number: number; owner_name: string; floor: number; profession?: string; owner_photo?: string; notes: string; }
 
 export default function ApartmentsPage() {
@@ -28,7 +30,7 @@ export default function ApartmentsPage() {
       const res = await apartmentsApi.getAidatHistory(apt.id);
       setHistoryData(res.data);
     } catch {
-      toast.error('Gemiş yüklenemedi.');
+      toast.error('Geçmiş yüklenemedi.');
     }
   };
 
@@ -196,7 +198,7 @@ export default function ApartmentsPage() {
               {historyData.length > 0 ? historyData.map((record, i) => (
                 <div key={i} className="flex items-center justify-between p-3.5 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-800/20">
                   <div>
-                    <p className="font-bold text-sm">{record.month} {record.year}</p>
+                    <p className="font-bold text-sm">{MONTHS[(record.month as number) - 1]} {record.year}</p>
                     <p className="text-xs text-slate-500 mt-1">{record.paid_at ? new Date(record.paid_at).toLocaleDateString('tr-TR') : 'Tarih Yok'}</p>
                   </div>
                   <div className="text-right flex flex-col items-end">

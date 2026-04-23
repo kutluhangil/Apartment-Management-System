@@ -78,5 +78,48 @@ CREATE TABLE IF NOT EXISTS timeline (
   income REAL DEFAULT 0,
   total_expense REAL DEFAULT 0,
   maintenance_note TEXT,
-  icon TEXT DEFAULT 'foundation'
+  icon TEXT DEFAULT 'foundation',
+  image_path TEXT
+);
+
+-- Announcements
+CREATE TABLE IF NOT EXISTS announcements (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  date TEXT NOT NULL,
+  created_by INTEGER REFERENCES users(id),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Documents archive
+CREATE TABLE IF NOT EXISTS documents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  description TEXT,
+  file_url TEXT NOT NULL,
+  upload_date TEXT NOT NULL,
+  uploaded_by INTEGER REFERENCES users(id),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Maintenance tracker
+CREATE TABLE IF NOT EXISTS maintenance (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  maintenance_type TEXT NOT NULL,
+  description TEXT,
+  last_maintenance_date TEXT,
+  next_maintenance_date TEXT,
+  created_by INTEGER REFERENCES users(id),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Audit logs
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER REFERENCES users(id),
+  action_type TEXT NOT NULL,
+  target_entity TEXT NOT NULL,
+  details TEXT,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );

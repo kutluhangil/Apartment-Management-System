@@ -59,6 +59,19 @@ router.put('/:id', authenticateToken, authorizeRole(['admin', 'manager']), async
   } catch (err) { next(err); }
 });
 
+router.get('/:id/aidats', authenticateToken, async (req, res, next) => {
+  try {
+    const rows = await getAll(`
+      SELECT ap.status, ap.paid_at, ap.note, a.month, a.year, a.amount
+      FROM aidat_payments ap
+      JOIN aidats a ON ap.aidat_id = a.id
+      WHERE ap.apartment_id = ?
+      ORDER BY a.year DESC, a.month DESC
+    `, [req.params.id]);
+    res.json(rows);
+  } catch (err) { next(err); }
+});
+
 router.post('/:id/photo', authenticateToken, authorizeRole(['admin', 'manager']), upload.single('photo'), async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Dosya yüklenemedi.' });
