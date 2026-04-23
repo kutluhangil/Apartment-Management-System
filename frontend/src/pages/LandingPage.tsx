@@ -17,10 +17,9 @@ interface TimelineEntry {
 }
 
 const STATS = [
-  { number: '18', label: 'Daire', icon: 'apartment' },
-  { number: '6',  label: 'Kat',   icon: 'stairs' },
-  { number: '2024', label: 'Kuruluş', icon: 'calendar_today' },
-  { number: '%100', label: 'Şeffaflık', icon: 'verified', dark: true },
+  { number: '18',   label: 'Daire'    },
+  { number: '6',    label: 'Kat'      },
+  { number: '2024', label: 'Kuruluş'  },
 ];
 
 const MARQUEE_ITEMS = [
@@ -102,28 +101,37 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right — Stats Grid */}
-          <div className="order-1 lg:order-2 grid grid-cols-2 gap-3 sm:gap-4 fade-in">
-            {STATS.map((stat) => (
-              <div
-                key={stat.label}
-                className={`rounded-2xl sm:rounded-3xl p-6 sm:p-8 ${
-                  stat.dark
-                    ? 'bg-[#111] text-white'
-                    : 'bg-white border border-slate-100 shadow-sm'
-                }`}
-              >
-                <span className={`material-symbols-outlined text-xl sm:text-2xl mb-3 block ${stat.dark ? 'text-white/40' : 'text-slate-200'}`}>
-                  {stat.icon}
-                </span>
-                <div className={`text-3xl sm:text-4xl font-black tracking-tight mb-1 ${stat.dark ? 'text-white' : 'text-[#111]'}`}>
-                  {stat.number}
-                </div>
-                <div className={`text-xs sm:text-sm font-medium ${stat.dark ? 'text-white/50' : 'text-slate-400'}`}>
-                  {stat.label}
-                </div>
+          {/* Right — Building photo + stats */}
+          <div className="order-1 lg:order-2 flex flex-col gap-3 sm:gap-4 fade-in">
+            {/* Building image */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden h-56 sm:h-72 lg:h-80 shadow-sm">
+              <img
+                src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=900&q=85&auto=format&fit=crop"
+                alt="Cumhuriyet Apartmanı"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+              <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
+                <p className="text-white/50 text-[10px] font-bold uppercase tracking-[0.15em] mb-0.5">Cumhuriyet Apartmanı</p>
+                <p className="text-white text-sm sm:text-base font-bold">Ankara · 2024</p>
               </div>
-            ))}
+              <div className="absolute top-4 right-4 sm:top-5 sm:right-5 flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-white text-xs font-semibold">Aktif</span>
+              </div>
+            </div>
+
+            {/* Stats row */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+              {STATS.slice(0, 3).map((stat) => (
+                <div key={stat.label} className="bg-white border border-slate-100 shadow-sm rounded-2xl p-4 sm:p-5">
+                  <div className="text-xl sm:text-2xl font-black tracking-tight text-[#111] mb-0.5">
+                    {stat.number}
+                  </div>
+                  <div className="text-xs font-medium text-slate-400">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
