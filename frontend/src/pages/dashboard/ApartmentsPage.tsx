@@ -73,7 +73,7 @@ export default function ApartmentsPage() {
       <div className="relative max-w-md">
         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
         <input
-          className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           placeholder="Daire no veya isim ara..."
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -83,7 +83,7 @@ export default function ApartmentsPage() {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map(apt => (
-          <div key={apt.id} onClick={() => handleViewHistory(apt)} className="cursor-pointer relative group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-xl hover:scale-105 transition-all duration-300 transform">
+          <div key={apt.id} onClick={() => handleViewHistory(apt)} className="cursor-pointer relative group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-xl hover:scale-105 transition-all duration-300 transform">
             <div className="flex items-start justify-between mb-3 relative z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
@@ -98,15 +98,15 @@ export default function ApartmentsPage() {
                 <span className="material-symbols-outlined text-lg">edit</span>
               </button>
             </div>
-            {apt.notes && !apt.profession && <p className="text-xs text-slate-500 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 mt-2">{apt.notes}</p>}
+            {apt.notes && !apt.profession && <p className="text-xs text-slate-500 bg-slate-50 rounded-lg px-3 py-2 mt-2">{apt.notes}</p>}
 
             {/* Hover Tooltip/Modal (Fixing visibility issues) */}
             <div className="absolute left-1/2 -ml-32 bottom-full mb-4 w-64 rounded-2xl p-[2px] opacity-0 pointer-events-none scale-95 origin-bottom group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 z-50 shadow-2xl overflow-hidden
                             bg-gradient-to-r from-red-500 via-yellow-500 to-purple-500 animate-gradient-xy">
               {/* Inner card content */}
-              <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] p-4 relative z-10 flex flex-col items-center text-center">
+              <div className="w-full h-full bg-white rounded-[14px] p-4 relative z-10 flex flex-col items-center text-center">
                 
-                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-slate-100 dark:border-slate-800 mb-3 bg-slate-100 dark:bg-slate-800 flex-shrink-0">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-slate-100 mb-3 bg-slate-100 flex-shrink-0">
                   {apt.owner_photo ? (
                     <img src={`/api${apt.owner_photo}`} alt={apt.owner_name} className="w-full h-full object-cover" />
                   ) : (
@@ -114,11 +114,11 @@ export default function ApartmentsPage() {
                   )}
                 </div>
                 
-                <h4 className="font-bold text-base leading-tight text-slate-900 dark:text-slate-100 mb-1">{apt.owner_name}</h4>
+                <h4 className="font-bold text-base leading-tight text-slate-900 mb-1">{apt.owner_name}</h4>
                 <p className="text-xs text-primary font-medium mb-3">{apt.profession || 'Daire Sakini'}</p>
                 
                 {apt.notes && (
-                  <div className="text-xs text-slate-500 bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 w-full text-center">
+                  <div className="text-xs text-slate-500 bg-slate-50 rounded-lg p-2 w-full text-center">
                     {apt.notes}
                   </div>
                 )}
@@ -135,7 +135,7 @@ export default function ApartmentsPage() {
       {/* Edit modal */}
       {editing && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full space-y-4" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full space-y-4" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-lg">Daire {editing.number} Düzenle</h3>
               <button onClick={() => setEditing(null)}><span className="material-symbols-outlined">close</span></button>
@@ -143,7 +143,7 @@ export default function ApartmentsPage() {
             <div>
               <label className="block text-sm font-medium mb-1.5">Daire Sahibi</label>
               <div className="flex items-center gap-4 mb-3">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0 relative border border-slate-200 dark:border-slate-700">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 flex-shrink-0 relative border border-slate-200">
                   {editing.owner_photo ? (
                     <img src={`/api${editing.owner_photo}`} alt="Owner" className="w-full h-full object-cover" />
                   ) : (
@@ -183,19 +183,19 @@ export default function ApartmentsPage() {
       {/* History modal */}
       {historyApt && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setHistoryApt(null)}>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-lg">Daire {historyApt.number}</h3>
                 <p className="text-xs text-slate-500">Aidat Geçmişi</p>
               </div>
-              <button onClick={() => setHistoryApt(null)} className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+              <button onClick={() => setHistoryApt(null)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
                 <span className="material-symbols-outlined text-sm">close</span>
               </button>
             </div>
             <div className="flex-1 overflow-y-auto pr-2 space-y-3">
               {historyData.length > 0 ? historyData.map((record, i) => (
-                <div key={i} className="flex items-center justify-between p-3.5 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-800/20">
+                <div key={i} className="flex items-center justify-between p-3.5 border border-slate-100 rounded-xl bg-slate-50/50">
                   <div>
                     <p className="font-bold text-sm">{MONTHS[(record.month as number) - 1]} {record.year}</p>
                     <p className="text-xs text-slate-500 mt-1">{record.paid_at ? new Date(record.paid_at).toLocaleDateString('tr-TR') : 'Tarih Yok'}</p>
@@ -203,9 +203,9 @@ export default function ApartmentsPage() {
                   <div className="text-right flex flex-col items-end">
                     <p className="font-bold text-sm mb-1">{formatCurrency(record.amount || 0)}</p>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                      record.status === 'paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
-                      record.status === 'pending' ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400' :
-                      'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
+                      record.status === 'paid' ? 'bg-emerald-100 text-emerald-700' :
+                      record.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                      'bg-red-100 text-red-700'
                     }`}>
                       {record.status === 'paid' ? 'ÖDENDİ' : record.status === 'pending' ? 'BEKLİYOR' : 'ÖDENMEDİ'}
                     </span>
@@ -222,11 +222,11 @@ export default function ApartmentsPage() {
         </div>
       )}
 
-      <div className="bg-primary/5 dark:bg-primary/10 rounded-xl p-5 flex items-center gap-4">
+      <div className="bg-primary/5 rounded-xl p-5 flex items-center gap-4">
         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
           <span className="material-symbols-outlined text-primary">info</span>
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+        <p className="text-sm text-slate-600">
           <strong className="text-primary">KALI YAPI / KALİ YAPI</strong> dairelerinin sakinleri henüz belirlenmemiştir. Güncellemek için düzenleme butonunu kullanın.
         </p>
       </div>

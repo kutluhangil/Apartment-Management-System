@@ -10,14 +10,14 @@ export default function InvoicePreviewModal({ url, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-slate-900 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-auto"
+        className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-auto"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <h3 className="font-bold">Fatura Önizleme</h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
           >
             <span className="material-symbols-outlined">close</span>
           </button>

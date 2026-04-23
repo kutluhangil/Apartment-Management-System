@@ -39,13 +39,13 @@ export default function MeetingNotesPage() {
   const years = ['all', ...Array.from({ length: currentYear - 2022 }, (_, i) => String(currentYear - i))];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
+    <div className="min-h-screen flex flex-col bg-background-light">
       <Navbar />
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-5 lg:px-10 py-10">
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-primary dark:text-white mb-2">Toplantı Notları</h1>
-          <p className="text-slate-500 dark:text-slate-400 max-w-2xl">Yönetim ve kurul toplantılarının resmi kayıtları, alınan kararlar ve katılım detayları.</p>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-primary mb-2">Toplantı Notları</h1>
+          <p className="text-slate-500 max-w-2xl">Yönetim ve kurul toplantılarının resmi kayıtları, alınan kararlar ve katılım detayları.</p>
         </div>
 
         {/* Filter tabs */}
@@ -56,8 +56,8 @@ export default function MeetingNotesPage() {
               onClick={() => { setActiveYear(y); setPage(1); }}
               className={`px-5 py-3 border-b-2 text-sm font-medium whitespace-nowrap transition-colors ${
                 activeYear === y
-                  ? 'border-primary text-primary dark:text-white font-bold'
-                  : 'border-transparent text-primary/50 dark:text-slate-500 hover:text-primary'
+                  ? 'border-primary text-primary font-bold'
+                  : 'border-transparent text-primary/50 hover:text-primary'
               }`}
             >
               {y === 'all' ? 'Tümü' : y}
@@ -79,27 +79,27 @@ export default function MeetingNotesPage() {
             {meetings.map(m => {
               const s = meetingStatusConfig[m.status] || meetingStatusConfig.archived;
               return (
-                <div key={m.id} className="bg-white dark:bg-white/5 rounded-xl border border-primary/5 p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div key={m.id} className="bg-white rounded-xl border border-primary/5 p-6 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <span className="text-xs font-bold uppercase tracking-widest text-primary/40 mb-1 block">{m.meeting_type}</span>
-                      <h3 className="text-xl font-bold text-primary dark:text-white">{m.title}</h3>
+                      <h3 className="text-xl font-bold text-primary">{m.title}</h3>
                     </div>
                     <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase flex-shrink-0 ${s.cls}`}>{s.label}</span>
                   </div>
 
                   <div className="flex flex-wrap gap-3 mb-5">
-                    <div className="flex items-center gap-1.5 text-primary/60 dark:text-slate-400">
+                    <div className="flex items-center gap-1.5 text-primary/60">
                       <span className="material-symbols-outlined text-lg">calendar_today</span>
                       <span className="text-sm">{new Date(m.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                     </div>
                     {m.time && (
-                      <div className="flex items-center gap-1.5 text-primary/60 dark:text-slate-400">
+                      <div className="flex items-center gap-1.5 text-primary/60">
                         <span className="material-symbols-outlined text-lg">schedule</span>
                         <span className="text-sm">{m.time}</span>
                       </div>
                     )}
-                    <div className="flex items-center gap-1.5 text-primary/60 dark:text-slate-400">
+                    <div className="flex items-center gap-1.5 text-primary/60">
                       <span className="material-symbols-outlined text-lg">group</span>
                       <span className="text-sm">{m.attendee_count} Daire</span>
                     </div>
@@ -108,16 +108,16 @@ export default function MeetingNotesPage() {
                   {m.notes && (
                     <div className="mb-4">
                       <h4 className="text-xs font-bold text-primary/40 uppercase mb-2">Toplantı Notları</h4>
-                      <p className="text-sm text-primary/80 dark:text-slate-300 leading-relaxed">{m.notes}</p>
+                      <p className="text-sm text-primary/80 leading-relaxed">{m.notes}</p>
                     </div>
                   )}
 
                   {m.decisions && m.decisions.length > 0 && (
-                    <div className="bg-primary/5 dark:bg-white/5 p-4 rounded-lg">
+                    <div className="bg-primary/5 p-4 rounded-lg">
                       <h4 className="text-xs font-bold text-primary/40 uppercase mb-2 flex items-center gap-1.5">
                         <span className="material-symbols-outlined text-sm">task_alt</span> Alınan Kararlar
                       </h4>
-                      <ul className="text-sm text-primary/80 dark:text-slate-300 space-y-1.5 list-disc list-inside">
+                      <ul className="text-sm text-primary/80 space-y-1.5 list-disc list-inside">
                         {m.decisions.map((d, i) => <li key={i}>{d}</li>)}
                       </ul>
                     </div>

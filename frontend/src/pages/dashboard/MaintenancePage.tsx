@@ -51,9 +51,9 @@ export default function MaintenancePage() {
     if (!nextDate) return null;
     const diff = new Date(nextDate).getTime() - new Date().getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    if (days < 0) return { label: 'Gecikmiş', color: 'text-red-600 bg-red-100 dark:bg-red-500/10' };
-    if (days <= 7) return { label: 'Yaklaşıyor', color: 'text-amber-600 bg-amber-100 dark:bg-amber-500/10' };
-    return { label: 'Planlı', color: 'text-emerald-600 bg-emerald-100 dark:bg-emerald-500/10' };
+    if (days < 0) return { label: 'Gecikmiş', color: 'text-red-600 bg-red-100' };
+    if (days <= 7) return { label: 'Yaklaşıyor', color: 'text-amber-600 bg-amber-100' };
+    return { label: 'Planlı', color: 'text-emerald-600 bg-emerald-100' };
   };
 
   return (
@@ -72,23 +72,23 @@ export default function MaintenancePage() {
       </div>
 
       {adding && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 mb-6">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
           <form onSubmit={handleCreate} className="space-y-4 max-w-lg">
             <div>
               <label className="block text-sm font-medium mb-1.5">Bakım Türü</label>
-              <input required placeholder="Örn: Asansör Periyodik Bakım" className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.maintenance_type} onChange={e => setForm({...form, maintenance_type: e.target.value})} />
+              <input required placeholder="Örn: Asansör Periyodik Bakım" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.maintenance_type} onChange={e => setForm({...form, maintenance_type: e.target.value})} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Son Bakım Tarihi</label>
-              <input type="date" className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.last_maintenance_date} onChange={e => setForm({...form, last_maintenance_date: e.target.value})} />
+              <input type="date" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.last_maintenance_date} onChange={e => setForm({...form, last_maintenance_date: e.target.value})} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Sonraki Bakım Tarihi</label>
-              <input type="date" className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.next_maintenance_date} onChange={e => setForm({...form, next_maintenance_date: e.target.value})} />
+              <input type="date" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.next_maintenance_date} onChange={e => setForm({...form, next_maintenance_date: e.target.value})} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Açıklama</label>
-              <input className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+              <input className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
             </div>
             <button type="submit" className="bg-primary text-white px-6 py-2 rounded-lg text-sm font-bold">Kaydet</button>
           </form>
@@ -99,11 +99,11 @@ export default function MaintenancePage() {
         {records.map(record => {
           const status = getStatus(record.next_maintenance_date);
           return (
-            <div key={record.id} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col relative overflow-hidden">
+            <div key={record.id} className="bg-white p-5 rounded-xl border border-slate-200 flex flex-col relative overflow-hidden">
               {status && <div className={`absolute top-4 right-4 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${status.color}`}>{status.label}</div>}
               
               <div className="flex items-center gap-3 mb-4 mt-2">
-                <div className="w-10 h-10 bg-orange-50 dark:bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
                   <span className="material-symbols-outlined text-xl">engineering</span>
                 </div>
                 <h3 className="font-bold text-sm line-clamp-2 pr-16">{record.maintenance_type}</h3>
@@ -111,14 +111,14 @@ export default function MaintenancePage() {
               
               {record.description && <p className="text-xs text-slate-500 mb-4">{record.description}</p>}
               
-              <div className="mt-auto space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs">
+              <div className="mt-auto space-y-2 pt-4 border-t border-slate-100 text-xs">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Son Bakım:</span>
                   <span className="font-semibold">{record.last_maintenance_date ? new Date(record.last_maintenance_date).toLocaleDateString('tr-TR') : '-'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Sonraki Bakım:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{record.next_maintenance_date ? new Date(record.next_maintenance_date).toLocaleDateString('tr-TR') : '-'}</span>
+                  <span className="font-bold text-slate-800">{record.next_maintenance_date ? new Date(record.next_maintenance_date).toLocaleDateString('tr-TR') : '-'}</span>
                 </div>
               </div>
 

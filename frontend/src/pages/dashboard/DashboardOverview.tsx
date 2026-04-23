@@ -34,19 +34,19 @@ export default function DashboardOverview() {
 
       {/* Dynamic Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-center">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-center">
           <p className="text-xs text-slate-500 mb-1">Toplam Daire</p>
           <p className="text-2xl font-bold">{apartments.length || 18}</p>
         </div>
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-center">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-center">
           <p className="text-xs text-slate-500 mb-1">Aidat Ödeyen (Bu Ay)</p>
           <p className="text-2xl font-bold text-emerald-600">{analytics?.paidCount || 0}</p>
         </div>
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-center">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-center">
           <p className="text-xs text-slate-500 mb-1">Aidat Borcu Olan</p>
           <p className="text-2xl font-bold text-red-500">{18 - (analytics?.paidCount || 0)}</p>
         </div>
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-center">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-center">
           <p className="text-xs text-slate-500 mb-1">Son Toplantı</p>
           <p className="text-lg font-bold">{lastMeeting ? new Date(lastMeeting.date).toLocaleDateString('tr-TR') : 'Yok'}</p>
         </div>
@@ -60,7 +60,7 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Income vs Expense Bar Chart */}
-        <div className="lg:col-span-8 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="lg:col-span-8 bg-white p-6 rounded-xl border border-slate-200">
           <h2 className="text-lg font-bold mb-6">Finansal Analiz (Aylık)</h2>
           <div className="h-72">
             {analytics?.monthlyData ? (
@@ -83,7 +83,7 @@ export default function DashboardOverview() {
 
         {/* Expense Pie Chart + Payment Rate */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white p-6 rounded-xl border border-slate-200">
             <h2 className="text-sm font-bold text-slate-500 mb-4">Gider Dağılımı</h2>
             <div className="h-48">
               {analytics?.expenseDistribution && analytics.expenseDistribution.length > 0 ? (
@@ -115,12 +115,12 @@ export default function DashboardOverview() {
           </div>
 
           {/* Aidat Payment Rate Progress */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white p-6 rounded-xl border border-slate-200">
             <div className="flex justify-between items-end mb-2">
               <h2 className="text-sm font-bold text-slate-500">Aidat Tahsil Oranı</h2>
               <span className="text-xl font-black">{analytics?.paymentRate || 0}%</span>
             </div>
-            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 mb-4 overflow-hidden">
+            <div className="w-full bg-slate-100 rounded-full h-3 mb-4 overflow-hidden">
               <div className="bg-primary h-3 rounded-full transition-all duration-1000" style={{ width: `${analytics?.paymentRate || 0}%` }}></div>
             </div>
             <div className="flex justify-between text-xs text-slate-500">

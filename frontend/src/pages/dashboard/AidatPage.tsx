@@ -8,9 +8,9 @@ import { MONTHS, formatCurrency } from '../../utils/format';
 import InvoicePreviewModal from '../../components/ui/InvoicePreviewModal';
 
 const statusConfig = {
-  paid: { label: '✔ Ödendi', cls: 'bg-green-100 text-green-700 hover:shadow-sm hover:scale-105 transition-all duration-200 dark:bg-green-500/20 dark:text-green-400 border border-transparent dark:border-green-500/30' },
-  pending: { label: '● Bekliyor', cls: 'bg-amber-100 text-amber-700 hover:shadow-sm hover:scale-105 transition-all duration-200 dark:bg-amber-500/20 dark:text-amber-400 border border-transparent dark:border-amber-500/30' },
-  unpaid: { label: '✖ Ödenmedi', cls: 'bg-red-100 text-red-700 hover:shadow-sm hover:scale-105 transition-all duration-200 dark:bg-red-500/20 dark:text-red-400 border border-transparent dark:border-red-500/30' },
+  paid: { label: '✔ Ödendi', cls: 'bg-green-100 text-green-700 hover:shadow-sm hover:scale-105 transition-all duration-200 border border-transparent' },
+  pending: { label: '● Bekliyor', cls: 'bg-amber-100 text-amber-700 hover:shadow-sm hover:scale-105 transition-all duration-200 border border-transparent' },
+  unpaid: { label: '✖ Ödenmedi', cls: 'bg-red-100 text-red-700 hover:shadow-sm hover:scale-105 transition-all duration-200 border border-transparent' },
 };
 
 interface Payment { id: number; apartment_number: number; owner_name: string; status: string; note: string; paid_at: string; }
@@ -157,7 +157,7 @@ export default function AidatPage() {
 
       {/* New period form */}
       {addingPeriod && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+        <div className="bg-white border border-slate-200 rounded-xl p-5">
           <h3 className="font-bold mb-4">Yeni Aidat Dönemi Oluştur</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
@@ -184,16 +184,16 @@ export default function AidatPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Beklenen</p><p className="text-xl font-bold">{formatCurrency(stats.total * (selectedAidat?.amount || 1000))}</p></div>
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Tahsil Edilen</p><p className="text-xl font-bold text-green-600">{formatCurrency(stats.collected)}</p></div>
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Ödenmemiş</p><p className="text-xl font-bold text-red-500">{stats.unpaid_count}</p></div>
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Beklemede</p><p className="text-xl font-bold text-amber-600">{stats.pending_count}</p></div>
+        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Beklenen</p><p className="text-xl font-bold">{formatCurrency(stats.total * (selectedAidat?.amount || 1000))}</p></div>
+        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Tahsil Edilen</p><p className="text-xl font-bold text-green-600">{formatCurrency(stats.collected)}</p></div>
+        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Ödenmemiş</p><p className="text-xl font-bold text-red-500">{stats.unpaid_count}</p></div>
+        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Beklemede</p><p className="text-xl font-bold text-amber-600">{stats.pending_count}</p></div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Aidat table */}
-        <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-wrap gap-4 items-center justify-between">
+        <div className="lg:col-span-8 bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="p-5 border-b border-slate-100 flex flex-wrap gap-4 items-center justify-between">
             <h3 className="font-bold">Aidat Durumları (18 Daire)</h3>
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex flex-wrap gap-1">
@@ -204,12 +204,12 @@ export default function AidatPage() {
                   </button>
                 ))}
               </div>
-              <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+              <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
               <div className="flex gap-2">
-                <button onClick={exportPDF} className="flex items-center gap-1 px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 transition-colors">
+                <button onClick={exportPDF} className="flex items-center gap-1 px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-medium text-slate-600 transition-colors">
                   <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span> PDF İndir
                 </button>
-                <button onClick={exportExcel} className="flex items-center gap-1 px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 transition-colors">
+                <button onClick={exportExcel} className="flex items-center gap-1 px-3 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-medium text-slate-600 transition-colors">
                   <span className="material-symbols-outlined text-[16px]">table_chart</span> Excel İndir
                 </button>
               </div>
@@ -218,7 +218,7 @@ export default function AidatPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800/50 text-xs uppercase text-slate-500">
+                <tr className="bg-slate-50 text-xs uppercase text-slate-500">
                   <th className="px-5 py-3">Daire No</th>
                   <th className="px-5 py-3">Sakin</th>
                   <th className="px-5 py-3 hidden md:table-cell">Tutar</th>
@@ -226,19 +226,19 @@ export default function AidatPage() {
                   <th className="px-5 py-3">İşlem</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-slate-100">
                 {payments.map(p => {
                   const s = statusConfig[p.status as keyof typeof statusConfig] || statusConfig.unpaid;
                   
                   // Row highlight logic based on status
                   let rowBorderCls = "border-l-4 border-transparent";
-                  if (p.status === 'paid') rowBorderCls = "border-l-4 border-green-400 dark:border-green-500";
-                  else if (p.status === 'unpaid') rowBorderCls = "border-l-4 border-red-400 dark:border-red-500";
+                  if (p.status === 'paid') rowBorderCls = "border-l-4 border-green-400";
+                  else if (p.status === 'unpaid') rowBorderCls = "border-l-4 border-red-400";
                   
                   return (
-                    <tr key={p.id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors ${rowBorderCls}`}>
+                    <tr key={p.id} className={`hover:bg-slate-50 transition-colors ${rowBorderCls}`}>
                       <td className="px-5 py-3.5 font-medium text-sm">Daire {p.apartment_number}</td>
-                      <td className="px-5 py-3.5 text-sm text-slate-600 dark:text-slate-400">{p.owner_name}</td>
+                      <td className="px-5 py-3.5 text-sm text-slate-600">{p.owner_name}</td>
                       <td className="px-5 py-3.5 hidden md:table-cell text-sm">{formatCurrency(selectedAidat?.amount || 1000)}</td>
                       <td className="px-5 py-3.5 text-center">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${s.cls}`}>{s.label}</span>
@@ -247,7 +247,7 @@ export default function AidatPage() {
                         <select
                           value={p.status}
                           onChange={e => handleStatusChange(p.id, e.target.value)}
-                          className="text-sm border border-gray-300 rounded-lg py-1.5 px-2 bg-white dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 transition-all duration-200 cursor-pointer hover:border-gray-400"
+                          className="text-sm border border-gray-300 rounded-lg py-1.5 px-2 bg-white focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all duration-200 cursor-pointer hover:border-gray-400"
                         >
                           <option value="paid">Ödendi</option>
                           <option value="pending">Beklemede</option>
@@ -265,7 +265,7 @@ export default function AidatPage() {
         {/* Right column: expense form + recent */}
         <div className="lg:col-span-4 space-y-5">
           {/* Expense form */}
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white p-5 rounded-xl border border-slate-200">
             <h3 className="font-bold mb-4">Gider Kaydet</h3>
             <form onSubmit={handleExpenseSubmit} className="space-y-3">
               <div>
@@ -306,7 +306,7 @@ export default function AidatPage() {
           </div>
 
           {/* Recent expenses */}
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white p-5 rounded-xl border border-slate-200">
             <h3 className="font-bold mb-4">Son Giderler</h3>
             <div className="space-y-3">
               {recentExpenses.map(exp => (

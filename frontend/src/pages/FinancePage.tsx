@@ -58,32 +58,32 @@ export default function FinancePage() {
   }, [page]);
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark">
+    <div className="relative flex min-h-screen flex-col bg-background-light">
       <Navbar />
 
       <main className="flex-1 px-5 lg:px-16 py-10 max-w-6xl mx-auto w-full">
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Finansal Şeffaflık</h1>
-          <p className="text-slate-500 dark:text-slate-400 max-w-2xl">Apartmanımızın tüm gelir ve gider kayıtlarını gerçek zamanlı ve şeffaf bir şekilde takip edebilirsiniz.</p>
+          <p className="text-slate-500 max-w-2xl">Apartmanımızın tüm gelir ve gider kayıtlarını gerçek zamanlı ve şeffaf bir şekilde takip edebilirsiniz.</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
             <div className="flex items-center justify-between mb-3">
               <span className="text-slate-500 font-medium text-sm">Toplam Gelir</span>
               <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600"><span className="material-symbols-outlined text-lg">trending_up</span></div>
             </div>
             <p className="text-2xl font-bold">{formatCurrency(summary.totalIncome)}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
             <div className="flex items-center justify-between mb-3">
               <span className="text-slate-500 font-medium text-sm">Toplam Gider</span>
               <div className="p-2 bg-rose-100 rounded-lg text-rose-600"><span className="material-symbols-outlined text-lg">trending_down</span></div>
             </div>
             <p className="text-2xl font-bold">{formatCurrency(summary.totalExpense)}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
             <div className="flex items-center justify-between mb-3">
               <span className="text-slate-500 font-medium text-sm">Mevcut Bakiye</span>
               <div className="p-2 bg-blue-100 rounded-lg text-blue-600"><span className="material-symbols-outlined text-lg">account_balance_wallet</span></div>
@@ -98,23 +98,23 @@ export default function FinancePage() {
           <h2 className="text-2xl font-bold">Gider Kayıtları</h2>
         </div>
 
-        <div className="overflow-hidden bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm">
+        <div className="overflow-hidden bg-white rounded-xl border border-slate-100 shadow-sm">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100 dark:border-slate-800">
+              <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Gider Başlığı</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 hidden md:table-cell">Tarih</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Tutar</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Fatura</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr><td colSpan={4} className="px-5 py-10 text-center text-slate-500">Yükleniyor...</td></tr>
               ) : expenses.length === 0 ? (
                 <tr><td colSpan={4} className="px-5 py-10 text-center text-slate-500">Henüz gider kaydı yok.</td></tr>
               ) : expenses.map((exp, i) => (
-                <tr key={exp.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <tr key={exp.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${iconColors[i % iconColors.length]}`}>
@@ -134,7 +134,7 @@ export default function FinancePage() {
                     {exp.invoice_path ? (
                       <button
                         onClick={() => setPreviewUrl(`/uploads/${exp.invoice_path}`)}
-                        className="inline-flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 hover:bg-primary hover:text-white transition-all"
+                        className="inline-flex items-center justify-center p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-primary hover:text-white transition-all"
                         title="Faturayı Gör"
                       >
                         <span className="material-symbols-outlined">visibility</span>
@@ -147,7 +147,7 @@ export default function FinancePage() {
               ))}
             </tbody>
           </table>
-          <div className="px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="px-5 py-4 border-t border-slate-100 flex items-center justify-between">
             <p className="text-sm text-slate-500">Toplam {total} kayıt • sayfa {page}/{totalPages}</p>
             <div className="flex gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-3 py-1 rounded border border-slate-200 text-xs font-semibold disabled:opacity-40">Geri</button>
@@ -176,7 +176,7 @@ export default function FinancePage() {
       {previewUrl && <InvoicePreviewModal url={previewUrl} onClose={() => setPreviewUrl(null)} />}
 
       {/* Footer */}
-      <footer className="py-8 border-t border-slate-200 dark:border-slate-800 px-5">
+      <footer className="py-8 border-t border-slate-200 px-5">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <span className="text-slate-500 text-sm">© {new Date().getFullYear()} Cumhuriyet Apartmanı Yönetimi</span>
           <div className="flex gap-5">

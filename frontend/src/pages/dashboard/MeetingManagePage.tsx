@@ -51,19 +51,19 @@ export default function MeetingManagePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Form */}
         <div className="lg:col-span-2 space-y-5">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white p-6 rounded-xl border border-slate-200">
             <h3 className="text-lg font-bold mb-5 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">add_circle</span> Yeni Toplantı Oluştur
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1.5">Toplantı Konusu</label>
-                <input className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Örn: 2025 Olağan Genel Kurul" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+                <input className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Örn: 2025 Olağan Genel Kurul" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Toplantı Türü</label>
-                  <select className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.meeting_type} onChange={e => setForm(f => ({ ...f, meeting_type: e.target.value }))}>
+                  <select className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.meeting_type} onChange={e => setForm(f => ({ ...f, meeting_type: e.target.value }))}>
                     {MEETING_TYPES.map(t => (
                       <option key={t} value={t}>{t}</option>
                     ))}
@@ -71,26 +71,26 @@ export default function MeetingManagePage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Durum</label>
-                  <select className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
+                  <select className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
                     {Object.entries(meetingStatusConfig).map(([v, { label }]) => <option key={v} value={v}>{label}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Tarih</label>
-                  <input type="date" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
+                  <input type="date" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Saat</label>
-                  <input type="time" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
+                  <input type="time" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Toplantı Notları ve Gündem</label>
-                <textarea className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" rows={4} placeholder="Gündem maddelerini buraya yazınız..." value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
+                <textarea className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" rows={4} placeholder="Gündem maddelerini buraya yazınız..." value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Alınan Kararlar <span className="text-slate-400 font-normal">(her satıra bir karar)</span></label>
-                <textarea className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" rows={3} placeholder="Her satıra bir karar yazın..." value={decisionsText} onChange={e => setDecisionsText(e.target.value)} />
+                <textarea className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" rows={3} placeholder="Her satıra bir karar yazın..." value={decisionsText} onChange={e => setDecisionsText(e.target.value)} />
               </div>
               <div className="flex justify-end">
                 <button type="submit" disabled={loading} className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:opacity-90 transition-opacity disabled:opacity-60">
@@ -101,17 +101,17 @@ export default function MeetingManagePage() {
           </div>
 
           {/* Recent meetings */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="p-5 border-b border-slate-100">
               <h3 className="font-bold">Toplantı Kayıtları</h3>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-slate-100">
               {meetings.length === 0 ? (
                 <div className="p-6 text-center text-slate-500 text-sm">Henüz toplantı kaydı yok.</div>
               ) : meetings.map(m => {
                 const s = meetingStatusConfig[m.status] || meetingStatusConfig.archived;
                 return (
-                  <div key={m.id} className="p-5 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                  <div key={m.id} className="p-5 hover:bg-slate-50 transition-colors">
                     <div className="flex justify-between items-start gap-3 mb-2">
                       <div>
                         <span className="text-xs text-slate-400 uppercase tracking-wider">{m.meeting_type}</span>
@@ -139,14 +139,14 @@ export default function MeetingManagePage() {
 
         {/* Sidebar */}
         <div className="space-y-5">
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between">
               <h3 className="font-bold">Daire Listesi</h3>
               <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500">18 Daire</span>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-80 overflow-y-auto">
+            <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
               {apartments.map(apt => (
-                <div key={apt.id} className="p-3.5 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                <div key={apt.id} className="p-3.5 flex items-center gap-3 hover:bg-slate-50">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">{String(apt.number).padStart(2,'0')}</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">{apt.owner_name}</p>

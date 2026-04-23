@@ -20,14 +20,10 @@ export default function LoginPage() {
   }, []);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      navigate('/dashboard', { replace: true });
-    }
+    if (!isLoading && isAuthenticated) navigate('/dashboard', { replace: true });
   }, [isAuthenticated, isLoading, navigate]);
 
-  if (isLoading || isAuthenticated) {
-    return null;
-  }
+  if (isLoading || isAuthenticated) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,13 +34,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const res = await authApi.login(form.email, form.password);
-      // Cookie is set automatically by the server — we only receive user info
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', form.email);
-      } else {
-        localStorage.removeItem('rememberedEmail');
-      }
-      localStorage.removeItem('rememberedPassword'); // Eski güvensiz kaydı temizle
+      if (rememberMe) localStorage.setItem('rememberedEmail', form.email);
+      else localStorage.removeItem('rememberedEmail');
+      localStorage.removeItem('rememberedPassword');
       login(res.data.user);
       toast.success(`Hoş geldiniz, ${res.data.user.name}!`);
       navigate('/dashboard', { replace: true });
@@ -56,72 +48,73 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background-light dark:bg-background-dark px-5">
-      <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#fafaf9] px-5">
+      <Link to="/" className="absolute top-5 left-5 sm:top-6 sm:left-6 flex items-center gap-2 text-sm text-slate-400 hover:text-[#111] transition-colors">
         <span className="material-symbols-outlined text-lg">arrow_back</span>
-        Ana Sayfa
+        <span className="hidden sm:inline">Ana Sayfa</span>
       </Link>
 
       <div className="w-full max-w-sm">
-        <div className="text-center mb-10">
-          <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="material-symbols-outlined text-white text-3xl">apartment</span>
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span className="material-symbols-outlined text-white text-2xl">apartment</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Cumhuriyet Apartmanı</h1>
-          <p className="text-slate-500 text-sm mt-1">Yönetici Paneli</p>
+          <h1 className="text-2xl font-black tracking-tight text-[#111]">Cumhuriyet Apartmanı</h1>
+          <p className="text-slate-400 text-sm mt-1">Yönetici Girişi</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-8 space-y-5">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-7 sm:p-8 space-y-5">
           <div>
-            <label className="block text-sm font-medium mb-2">E-posta</label>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">E-posta</label>
             <input
               type="email"
               value={form.email}
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
               placeholder="ornek@cumhuriyet.com"
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#111]/20 focus:border-[#111]/30 transition-all"
               autoComplete="email"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Şifre</label>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Şifre</label>
             <input
               type="password"
               value={form.password}
               onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#111]/20 focus:border-[#111]/30 transition-all"
               autoComplete="current-password"
             />
           </div>
-          
+
           <div className="flex items-center">
             <input
               id="remember-me"
               type="checkbox"
               checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-4 w-4 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded text-primary focus:ring-primary/30"
+              onChange={e => setRememberMe(e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-[#111] focus:ring-[#111]/20"
             />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
-              Şifreyi hatırla
+            <label htmlFor="remember-me" className="ml-2 text-sm text-slate-600 cursor-pointer select-none">
+              E-postamı hatırla
             </label>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
+            className="w-full bg-[#111] text-white py-3 rounded-xl text-sm font-bold hover:bg-[#333] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {loading ? (
-              <><span className="material-symbols-outlined animate-spin text-lg">refresh</span> Giriş yapılıyor...</>
-            ) : 'Giriş Yap'}
+            {loading
+              ? <><span className="material-symbols-outlined animate-spin text-lg">refresh</span> Giriş yapılıyor...</>
+              : 'Giriş Yap'
+            }
           </button>
         </form>
 
-        <div className="mt-8 text-center text-xs text-slate-400 dark:text-slate-500 space-y-1">
-          <p>Yönetici: murat@cumhuriyet.com (3434murat)</p>
-          <p>Admin: kutluhan@cumhuriyet.com (095321Admin.)</p>
+        <div className="mt-6 text-center text-xs text-slate-300 space-y-1">
+          <p>murat@cumhuriyet.com</p>
+          <p>kutluhan@cumhuriyet.com</p>
         </div>
       </div>
     </div>

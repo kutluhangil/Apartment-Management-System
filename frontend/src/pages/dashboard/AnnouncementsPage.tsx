@@ -62,19 +62,19 @@ export default function AnnouncementsPage() {
       </div>
 
       {adding && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 mb-6">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
           <form onSubmit={handleCreate} className="space-y-4 max-w-lg">
             <div>
               <label className="block text-sm font-medium mb-1.5">Başlık</label>
-              <input required className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+              <input required className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Tarih</label>
-              <input required type="date" className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
+              <input required type="date" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Mesaj</label>
-              <textarea required rows={4} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
+              <textarea required rows={4} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
             </div>
             <button type="submit" className="bg-primary text-white px-6 py-2 rounded-lg text-sm font-bold">Yayınla</button>
           </form>
@@ -83,11 +83,11 @@ export default function AnnouncementsPage() {
 
       <div className="space-y-4">
         {announcements.map(ann => (
-          <div key={ann.id} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 relative group">
+          <div key={ann.id} className="bg-white p-6 rounded-xl border border-slate-200 relative group">
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-bold text-lg text-primary">{ann.title}</h3>
               <div className="flex items-center gap-4">
-                <span className="text-xs font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">{new Date(ann.date).toLocaleDateString('tr-TR')}</span>
+                <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">{new Date(ann.date).toLocaleDateString('tr-TR')}</span>
                 {(user?.role === 'admin' || user?.role === 'manager') && (
                   <button onClick={() => handleDelete(ann.id)} className="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="material-symbols-outlined text-[20px]">delete</span>
@@ -95,7 +95,7 @@ export default function AnnouncementsPage() {
                 )}
               </div>
             </div>
-            <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{ann.message}</p>
+            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{ann.message}</p>
           </div>
         ))}
         {announcements.length === 0 && (

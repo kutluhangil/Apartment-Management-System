@@ -119,8 +119,8 @@ export default function ExpensePage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Gelir</p><p className="text-xl font-bold text-emerald-600">{formatCurrency(summary.totalIncome)}</p></div>
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Gider</p><p className="text-xl font-bold text-red-500">{formatCurrency(summary.totalExpense)}</p></div>
+        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Gelir</p><p className="text-xl font-bold text-emerald-600">{formatCurrency(summary.totalIncome)}</p></div>
+        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Gider</p><p className="text-xl font-bold text-red-500">{formatCurrency(summary.totalExpense)}</p></div>
         <div className="bg-primary text-white p-5 rounded-xl"><p className="text-xs opacity-70 mb-1">Net Bakiye</p><p className="text-xl font-bold">{formatCurrency(summary.balance)}</p></div>
       </div>
 
@@ -135,13 +135,13 @@ export default function ExpensePage() {
             </div>
             
             <div className="flex items-center gap-2 flex-wrap">
-              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 focus-within:border-primary/50 transition-colors">
+              <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus-within:border-primary/50 transition-colors">
                 <span className="text-xs text-slate-500 whitespace-nowrap">Tarih Filtresi:</span>
                 <input 
                   type="month" 
                   value={monthFilter} 
                   onChange={(e) => { setMonthFilter(e.target.value); setPage(1); }}
-                  className="bg-transparent text-sm focus:outline-none dark:text-slate-300 min-w-min"
+                  className="bg-transparent text-sm focus:outline-none min-w-min"
                 />
                 {monthFilter && (
                   <button onClick={() => { setMonthFilter(''); setPage(1); }} className="text-slate-400 hover:text-red-500 ml-1">
@@ -150,17 +150,17 @@ export default function ExpensePage() {
                 )}
               </div>
               <div className="flex gap-2">
-                <button onClick={exportPDF} disabled={exporting} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 disabled:opacity-50">
+                <button onClick={exportPDF} disabled={exporting} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 disabled:opacity-50">
                   <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
                 </button>
-                <button onClick={exportExcel} disabled={exporting} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 disabled:opacity-50">
+                <button onClick={exportExcel} disabled={exporting} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-600 disabled:opacity-50">
                   <span className="material-symbols-outlined text-[18px]">table_chart</span> Excel
                 </button>
               </div>
             </div>
           </div>
           
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 overflow-hidden">
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100 text-xs uppercase text-slate-500">
@@ -213,7 +213,7 @@ export default function ExpensePage() {
 
         {/* Form */}
         <div className="lg:col-span-4">
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white p-5 rounded-xl border border-slate-200">
             <h3 className="font-bold mb-4">Yeni Kayıt Ekle</h3>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>

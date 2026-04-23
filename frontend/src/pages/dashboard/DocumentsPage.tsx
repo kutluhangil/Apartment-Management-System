@@ -75,7 +75,7 @@ export default function DocumentsPage() {
       </div>
 
       {adding && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 mb-6">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
           <form onSubmit={handleUpload} className="space-y-4 max-w-lg">
             <div>
               <label className="block text-sm font-medium mb-1.5">Dosya (PDF, DOCX, JPG, PNG)</label>
@@ -83,11 +83,11 @@ export default function DocumentsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Başlık</label>
-              <input required className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+              <input required className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Açıklama (İsteğe bağlı)</label>
-              <input className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+              <input className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
             </div>
             <button type="submit" disabled={uploading} className="bg-primary text-white px-6 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
               {uploading && <span className="material-symbols-outlined text-[18px] animate-spin">refresh</span>}
@@ -99,9 +99,9 @@ export default function DocumentsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {documents.map(doc => (
-          <div key={doc.id} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col group hover:shadow-md transition-shadow">
+          <div key={doc.id} className="bg-white p-5 rounded-xl border border-slate-200 flex flex-col group hover:shadow-md transition-shadow">
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
                 <span className="material-symbols-outlined text-2xl">description</span>
               </div>
               <div className="flex-1 min-w-0">
@@ -109,9 +109,9 @@ export default function DocumentsPage() {
                 <p className="text-xs text-slate-500 mt-0.5">{new Date(doc.upload_date).toLocaleDateString('tr-TR')}</p>
               </div>
             </div>
-            {doc.description && <p className="text-xs text-slate-600 dark:text-slate-400 mb-4 line-clamp-2 flex-1">{doc.description}</p>}
+            {doc.description && <p className="text-xs text-slate-600 mb-4 line-clamp-2 flex-1">{doc.description}</p>}
             
-            <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
               <a href={doc.file_url} target="_blank" rel="noreferrer" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">download</span> İndir
               </a>
