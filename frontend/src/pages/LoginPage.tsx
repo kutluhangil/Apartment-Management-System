@@ -121,7 +121,7 @@ export default function LoginPage() {
 
         <div className="mt-8 text-center text-xs text-slate-400 dark:text-slate-500 space-y-1">
           <p>Yönetici: murat@cumhuriyet.com (3434murat)</p>
-          <p>Admin: admin@cumhuriyet.com (095321Admin.)</p>
+          <p>Admin: kutluhan@cumhuriyet.com (095321Admin.)</p>
         </div>
       </div>
     </div>

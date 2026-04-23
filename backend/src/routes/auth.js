@@ -5,7 +5,7 @@ const { getOne } = require('../db/database');
 const { JWT_SECRET } = require('../middleware/auth');
 
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -17,8 +17,10 @@ const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
-    // Resolve true client IP behind Cloudflare Tunnel instead of proxy loopback
-    return req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
+    // Prefer Cloudflare real IP; fall back to ipKeyGenerator (IPv6-safe)
+    const cfIp = req.headers['cf-connecting-ip'];
+    const fwdIp = req.headers['x-forwarded-for']?.split(',')[0].trim();
+    return cfIp || fwdIp || ipKeyGenerator(req);
   }
 });
 
