@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: deploy-home-server
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: self-hosted
@@ -15,11 +19,27 @@ jobs:
           cd /home/kutluhan/Apartment-Management-System
           git pull
 
+      - name: Cleanup old containers
+        run: |
+          docker container prune -f || true
+
       - name: Rebuild backend (if changed)
         run: |
           cd /home/kutluhan/Apartment-Management-System
+
           if git diff --name-only HEAD~1 HEAD | grep -q "^backend/"; then
-            docker compose up -d --build backend
+            echo "🔧 Backend değişti, rebuild başlıyor..."
+
+            docker compose stop backend || true
+            docker compose rm -f backend || true
+
+            for i in 1 2 3 4 5; do
+              docker compose up -d --build backend && break
+              echo "⏳ Retry $i/5 - container removal still in progress"
+              sleep 5
+            done
+
+            docker compose ps backend
             echo "✅ Backend rebuild edildi."
           else
             echo "⏭ Backend değişmedi, atlandı."
@@ -28,9 +48,13 @@ jobs:
       - name: Rebuild frontend (if changed)
         run: |
           cd /home/kutluhan/Apartment-Management-System
+
           if git diff --name-only HEAD~1 HEAD | grep -q "^frontend/"; then
+            echo "🎨 Frontend değişti, rebuild başlıyor..."
+
             cd /home/kutluhan/reverse-proxy
             docker compose up -d --build cumhuriyet
+
             echo "✅ Frontend rebuild edildi."
           else
             echo "⏭ Frontend değişmedi, atlandı."
