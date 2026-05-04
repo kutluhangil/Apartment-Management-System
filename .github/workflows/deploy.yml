@@ -17,7 +17,9 @@ jobs:
       - name: Pull latest code
         run: |
           cd /home/kutluhan/Apartment-Management-System
-          git pull
+          git fetch origin main
+          git reset --hard origin/main
+          git clean -fd
 
       - name: Cleanup old containers
         run: |
