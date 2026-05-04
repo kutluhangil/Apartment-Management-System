@@ -13,7 +13,7 @@ const statusConfig = {
   unpaid: { label: '✖ Ödenmedi', cls: 'bg-red-100 text-red-700 hover:shadow-sm hover:scale-105 transition-all duration-200 border border-transparent' },
 };
 
-interface Payment { id: number; apartment_number: number; owner_name: string; status: string; note: string; paid_at: string; }
+interface Payment { id: number; apartment_number: number; owner_name: string; room_type: string; amount: number; status: string; note: string; paid_at: string; }
 interface Aidat { id: number; month: number; year: number; amount: number; }
 interface Expense { id: number; title: string; date: string; amount: number; invoice_path: string | null; }
 
@@ -21,7 +21,7 @@ export default function AidatPage() {
   const [aidats, setAidats] = useState<Aidat[]>([]);
   const [selectedAidat, setSelectedAidat] = useState<Aidat | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [stats, setStats] = useState({ paid_count: 0, pending_count: 0, unpaid_count: 0, total: 18, collected: 0 });
+  const [stats, setStats] = useState({ paid_count: 0, pending_count: 0, unpaid_count: 0, total: 18, collected: 0, total_expected: 0 });
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
   const [newPeriod, setNewPeriod] = useState({ month: new Date().getMonth() + 1, year: new Date().getFullYear(), amount: 1000 });
   const [addingPeriod, setAddingPeriod] = useState(false);
@@ -60,6 +60,8 @@ export default function AidatPage() {
         return [
           `Daire ${p.apartment_number}`,
           p.owner_name,
+          p.room_type,
+          formatCurrency(p.amount),
           s.label,
           p.paid_at ? new Date(p.paid_at).toLocaleDateString('tr-TR') : '-',
           p.note || '-'
@@ -68,7 +70,7 @@ export default function AidatPage() {
 
       autoTable(doc, {
         startY: 36,
-        head: [['Daire No', 'Malik', 'Aidat Durumu', 'Odeme Tarihi', 'Not']],
+        head: [['Daire No', 'Malik', 'Tip', 'Tutar', 'Aidat Durumu', 'Odeme Tarihi', 'Not']],
         body: tableData,
       });
 
@@ -85,6 +87,8 @@ export default function AidatPage() {
         return {
           'Daire No': `Daire ${p.apartment_number}`,
           'Malik': p.owner_name,
+          'Tip': p.room_type,
+          'Tutar': p.amount,
           'Aidat Durumu': s.label,
           'Ödeme Tarihi': p.paid_at ? new Date(p.paid_at).toLocaleDateString('tr-TR') : '-',
           'Not': p.note || '-'
@@ -214,7 +218,7 @@ export default function AidatPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Beklenen</p><p className="text-xl font-bold">{formatCurrency(stats.total * (selectedAidat?.amount || 1000))}</p></div>
+        <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Beklenen Toplam</p><p className="text-xl font-bold">{formatCurrency(stats.total_expected)}</p></div>
         <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Tahsil Edilen</p><p className="text-xl font-bold text-green-600">{formatCurrency(stats.collected)}</p></div>
         <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Ödenmemiş</p><p className="text-xl font-bold text-red-500">{stats.unpaid_count}</p></div>
         <div className="bg-white p-5 rounded-xl border border-slate-200"><p className="text-xs text-slate-500 mb-1">Beklemede</p><p className="text-xl font-bold text-amber-600">{stats.pending_count}</p></div>
@@ -251,7 +255,8 @@ export default function AidatPage() {
                 <tr className="bg-slate-50 text-xs uppercase text-slate-500">
                   <th className="px-5 py-3">Daire No</th>
                   <th className="px-5 py-3">Sakin</th>
-                  <th className="px-5 py-3 hidden md:table-cell">Tutar</th>
+                  <th className="px-5 py-3">Tip</th>
+                  <th className="px-5 py-3">Tutar</th>
                   <th className="px-5 py-3 text-center">Durum</th>
                   <th className="px-5 py-3">İşlem</th>
                 </tr>
@@ -269,7 +274,12 @@ export default function AidatPage() {
                     <tr key={p.id} className={`hover:bg-slate-50 transition-colors ${rowBorderCls}`}>
                       <td className="px-5 py-3.5 font-medium text-sm">Daire {p.apartment_number}</td>
                       <td className="px-5 py-3.5 text-sm text-slate-600">{p.owner_name}</td>
-                      <td className="px-5 py-3.5 hidden md:table-cell text-sm">{formatCurrency(selectedAidat?.amount || 1000)}</td>
+                      <td className="px-5 py-3.5 text-sm">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.room_type === '3+1' ? 'bg-blue-50 text-blue-600' : 'bg-orange-50 text-orange-600'}`}>
+                          {p.room_type}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-sm font-bold">{formatCurrency(p.amount)}</td>
                       <td className="px-5 py-3.5 text-center">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${s.cls}`}>{s.label}</span>
                       </td>

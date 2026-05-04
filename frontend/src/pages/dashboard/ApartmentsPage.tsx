@@ -3,7 +3,7 @@ import { apartmentsApi } from '../../api';
 import toast from 'react-hot-toast';
 import { MONTHS, formatCurrency } from '../../utils/format';
 
-interface Apartment { id: number; number: number; owner_name: string; floor: number; profession?: string; owner_photo?: string; notes: string; }
+interface Apartment { id: number; number: number; owner_name: string; floor: number; profession?: string; owner_photo?: string; room_type: string; notes: string; }
 
 export default function ApartmentsPage() {
   const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -91,7 +91,12 @@ export default function ApartmentsPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-sm">{apt.owner_name}</h3>
-                  <p className="text-xs text-slate-500">Kat {apt.floor} · Daire {apt.number}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-slate-500">Kat {apt.floor} · Daire {apt.number}</p>
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${apt.room_type === '3+1' ? 'bg-blue-50 text-blue-600' : 'bg-orange-50 text-orange-600'}`}>
+                      {apt.room_type}
+                    </span>
+                  </div>
                 </div>
               </div>
               <button onClick={(e) => { e.stopPropagation(); setEditing({ ...apt }); }} className="p-1.5 z-20 relative text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
@@ -170,6 +175,17 @@ export default function ApartmentsPage() {
             <div>
               <label className="block text-sm font-medium mb-1.5">Meslek</label>
               <input type="text" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Örn: Avukat" value={editing.profession || ''} onChange={e => setEditing(p => p ? ({ ...p, profession: e.target.value }) : null)} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Daire Tipi</label>
+              <select 
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                value={editing.room_type}
+                onChange={e => setEditing(p => p ? ({ ...p, room_type: e.target.value }) : null)}
+              >
+                <option value="2+1">2+1 (800 TL Aidat)</option>
+                <option value="3+1">3+1 (1000 TL Aidat)</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Notlar</label>

@@ -9,13 +9,20 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
+  const [rememberPassword, setRememberPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
     if (savedEmail) {
       setForm(f => ({ ...f, email: savedEmail }));
       setRememberMe(true);
+    }
+    if (savedPassword) {
+      setForm(f => ({ ...f, password: savedPassword }));
+      setRememberPassword(true);
     }
   }, []);
 
@@ -34,9 +41,13 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const res = await authApi.login(form.email, form.password);
+      
       if (rememberMe) localStorage.setItem('rememberedEmail', form.email);
       else localStorage.removeItem('rememberedEmail');
-      localStorage.removeItem('rememberedPassword');
+
+      if (rememberPassword) localStorage.setItem('rememberedPassword', form.password);
+      else localStorage.removeItem('rememberedPassword');
+
       login(res.data.user);
       toast.success(`Hoş geldiniz, ${res.data.user.name}!`);
       navigate('/dashboard', { replace: true });
@@ -75,29 +86,52 @@ export default function LoginPage() {
               autoComplete="email"
             />
           </div>
-          <div>
+          <div className="relative">
             <label className="block text-sm font-semibold text-slate-700 mb-2">Şifre</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={form.password}
               onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
               placeholder="••••••••"
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#111]/20 focus:border-[#111]/30 transition-all"
               autoComplete="current-password"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-[38px] text-slate-400 hover:text-[#111] transition-colors"
+            >
+              <span className="material-symbols-outlined text-xl">
+                {showPassword ? "visibility_off" : "visibility"}
+              </span>
+            </button>
           </div>
 
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={e => setRememberMe(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 text-[#111] focus:ring-[#111]/20"
-            />
-            <label htmlFor="remember-me" className="ml-2 text-sm text-slate-600 cursor-pointer select-none">
-              E-postamı hatırla
-            </label>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={e => setRememberMe(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-[#111] focus:ring-[#111]/20"
+              />
+              <label htmlFor="remember-me" className="ml-2 text-sm text-slate-600 cursor-pointer select-none">
+                E-postamı hatırla
+              </label>
+            </div>
+            <div className="flex items-center">
+              <input
+                id="remember-password"
+                type="checkbox"
+                checked={rememberPassword}
+                onChange={e => setRememberPassword(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-[#111] focus:ring-[#111]/20"
+              />
+              <label htmlFor="remember-password" className="ml-2 text-sm text-slate-600 cursor-pointer select-none">
+                Şifremi hatırla
+              </label>
+            </div>
           </div>
 
           <button

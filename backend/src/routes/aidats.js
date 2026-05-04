@@ -13,7 +13,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
 router.get('/:id/payments', authenticateToken, async (req, res, next) => {
   try {
     const rows = await getAll(`
-      SELECT ap.*, a.number as apartment_number, a.owner_name
+      SELECT ap.*, a.number as apartment_number, a.owner_name, a.room_type
       FROM aidat_payments ap
       JOIN apartments a ON ap.apartment_id = a.id
       WHERE ap.aidat_id = ?
@@ -34,10 +34,11 @@ router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (
     const { lastInsertRowid: aidatId } = await run(
       'INSERT INTO aidats (month, year, amount) VALUES (?, ?, ?)', [month, year, amount]
     );
-    const apartments = await getAll('SELECT id FROM apartments');
+    const apartments = await getAll('SELECT id, room_type FROM apartments');
     for (const apt of apartments) {
-      await run('INSERT INTO aidat_payments (aidat_id, apartment_id, status) VALUES (?, ?, ?)',
-        [aidatId, Number(apt.id), 'unpaid']);
+      const individualAmount = apt.room_type === '2+1' ? 800 : 1000;
+      await run('INSERT INTO aidat_payments (aidat_id, apartment_id, status, amount) VALUES (?, ?, ?, ?)',
+        [aidatId, Number(apt.id), 'unpaid', individualAmount]);
     }
     res.status(201).json({ id: aidatId, month, year, amount });
   } catch (err) { next(err); }
@@ -53,7 +54,7 @@ router.put('/payments/:id', authenticateToken, authorizeRole(['admin', 'manager'
   } catch (err) { next(err); }
 });
 
-router.delete('/:id', authenticateToken, authorizeRole(['admin']), async (req, res, next) => {
+router.delete('/:id', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
   try {
     const aidat = await getOne('SELECT id FROM aidats WHERE id = ?', [req.params.id]);
     if (!aidat) return res.status(404).json({ error: 'Dönem bulunamadı.' });
@@ -75,14 +76,17 @@ router.get('/:id/stats', authenticateToken, async (req, res, next) => {
         COUNT(*) as total,
         SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_count,
         SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
-        SUM(CASE WHEN status = 'unpaid' THEN 1 ELSE 0 END) as unpaid_count
+        SUM(CASE WHEN status = 'unpaid' THEN 1 ELSE 0 END) as unpaid_count,
+        SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) as collected,
+        SUM(amount) as total_expected
       FROM aidat_payments WHERE aidat_id = ?
     `, [req.params.id]);
 
     res.json({
       ...Object.fromEntries(Object.entries(aidat)),
       ...Object.fromEntries(Object.entries(stats)),
-      collected: Number(stats.paid_count) * Number(aidat.amount)
+      collected: Number(stats.collected || 0),
+      total_expected: Number(stats.total_expected || 0)
     });
   } catch (err) { next(err); }
 });

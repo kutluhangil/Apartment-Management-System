@@ -52,9 +52,9 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 
 router.put('/:id', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
   try {
-    const { owner_name, floor, profession, notes, owner_photo } = req.body;
-    await run('UPDATE apartments SET owner_name = ?, floor = ?, profession = ?, notes = ?, owner_photo = ? WHERE id = ?',
-      [owner_name, floor, profession || null, notes || null, owner_photo || null, req.params.id]);
+    const { owner_name, floor, profession, notes, owner_photo, room_type } = req.body;
+    await run('UPDATE apartments SET owner_name = ?, floor = ?, profession = ?, notes = ?, owner_photo = ?, room_type = ? WHERE id = ?',
+      [owner_name, floor, profession || null, notes || null, owner_photo || null, room_type || '3+1', req.params.id]);
     res.json({ success: true });
   } catch (err) { next(err); }
 });
