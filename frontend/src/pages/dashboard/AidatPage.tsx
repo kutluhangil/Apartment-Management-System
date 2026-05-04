@@ -149,7 +149,11 @@ export default function AidatPage() {
       setAidats(r.data);
       if (r.data.length > 0) selectAidat(r.data[0]);
       setAddingPeriod(false);
-    } catch (e: any) { toast.error(e.response?.data?.error || 'Hata oluştu.'); }
+    } catch (e: any) {
+      console.error('Aidat creation error:', e);
+      const msg = e.response?.data?.error || e.message || 'Hata oluştu.';
+      toast.error(msg);
+    }
   };
 
   const handleExpenseSubmit = async (e: React.FormEvent) => {
