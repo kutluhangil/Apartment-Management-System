@@ -55,6 +55,7 @@ export const aidatsApi = {
   updatePayment: (paymentId: number, data: { status: string; note?: string; paid_at?: string }) =>
     api.put(`/aidats/payments/${paymentId}`, data),
   getStats: (aidatId: number) => api.get(`/aidats/${aidatId}/stats`),
+  delete: (aidatId: number) => api.delete(`/aidats/${aidatId}`),
 };
 
 // ─── Expenses ────────────────────────────────────────────────────────────────

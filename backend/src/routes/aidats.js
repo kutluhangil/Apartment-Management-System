@@ -53,6 +53,18 @@ router.put('/payments/:id', authenticateToken, authorizeRole(['admin', 'manager'
   } catch (err) { next(err); }
 });
 
+router.delete('/:id', authenticateToken, authorizeRole(['admin']), async (req, res, next) => {
+  try {
+    const aidat = await getOne('SELECT id FROM aidats WHERE id = ?', [req.params.id]);
+    if (!aidat) return res.status(404).json({ error: 'Dönem bulunamadı.' });
+
+    await run('DELETE FROM aidat_payments WHERE aidat_id = ?', [req.params.id]);
+    await run('DELETE FROM aidats WHERE id = ?', [req.params.id]);
+
+    res.json({ success: true });
+  } catch (err) { next(err); }
+});
+
 router.get('/:id/stats', authenticateToken, async (req, res, next) => {
   try {
     const aidat = await getOne('SELECT * FROM aidats WHERE id = ?', [req.params.id]);

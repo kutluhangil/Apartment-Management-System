@@ -25,6 +25,7 @@ export default function AidatPage() {
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
   const [newPeriod, setNewPeriod] = useState({ month: new Date().getMonth() + 1, year: new Date().getFullYear(), amount: 1000 });
   const [addingPeriod, setAddingPeriod] = useState(false);
+  const [deletingPeriod, setDeletingPeriod] = useState(false);
   const [expenseForm, setExpenseForm] = useState({ title: '', amount: '', date: '', description: '' });
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -111,6 +112,22 @@ export default function AidatPage() {
     } catch { toast.error('Güncelleme başarısız.'); }
   };
 
+  const handleDeletePeriod = async () => {
+    if (!selectedAidat) return;
+    const label = `${MONTHS[selectedAidat.month - 1]} ${selectedAidat.year}`;
+    if (!window.confirm(`"${label}" dönemini silmek istediğinize emin misiniz?\nTüm ödeme kayıtları da silinecektir.`)) return;
+    setDeletingPeriod(true);
+    try {
+      await aidatsApi.delete(selectedAidat.id);
+      toast.success(`${label} dönemi silindi.`);
+      const r = await aidatsApi.getAll();
+      setAidats(r.data);
+      if (r.data.length > 0) selectAidat(r.data[0]);
+      else { setSelectedAidat(null); setPayments([]); }
+    } catch (e: any) { toast.error(e.response?.data?.error || 'Silme başarısız.'); }
+    finally { setDeletingPeriod(false); }
+  };
+
   const handleCreatePeriod = async () => {
     try {
       await aidatsApi.create(newPeriod);
@@ -150,9 +167,22 @@ export default function AidatPage() {
           <h1 className="text-2xl font-bold">Aidat & Finans Yönetimi</h1>
           {selectedAidat && <p className="text-slate-500">{MONTHS[selectedAidat.month - 1]} {selectedAidat.year} Dönemi</p>}
         </div>
-        <button onClick={() => setAddingPeriod(!addingPeriod)} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 self-start">
-          <span className="material-symbols-outlined text-lg">add</span> Yeni Dönem
-        </button>
+        <div className="flex gap-2 self-start">
+          {selectedAidat && (
+            <button
+              onClick={handleDeletePeriod}
+              disabled={deletingPeriod}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-50"
+              title="Seçili dönemi sil"
+            >
+              <span className="material-symbols-outlined text-lg">delete</span>
+              {deletingPeriod ? 'Siliniyor...' : 'Dönemi Sil'}
+            </button>
+          )}
+          <button onClick={() => setAddingPeriod(!addingPeriod)} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+            <span className="material-symbols-outlined text-lg">add</span> Yeni Dönem
+          </button>
+        </div>
       </div>
 
       {/* New period form */}
