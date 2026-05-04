@@ -10,8 +10,6 @@ export default function ApartmentsPage() {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Apartment | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [historyApt, setHistoryApt] = useState<Apartment | null>(null);
-  const [historyData, setHistoryData] = useState<any[]>([]);
 
   useEffect(() => {
     apartmentsApi.getAll().then(r => setApartments(r.data)).catch(() => {});
@@ -22,16 +20,7 @@ export default function ApartmentsPage() {
     String(a.number).includes(search)
   );
 
-  const handleViewHistory = async (apt: Apartment) => {
-    setHistoryApt(apt);
-    setHistoryData([]);
-    try {
-      const res = await apartmentsApi.getAidatHistory(apt.id);
-      setHistoryData(res.data);
-    } catch {
-      toast.error('Geçmiş yüklenemedi.');
-    }
-  };
+
 
   const handleSave = async () => {
     if (!editing) return;
@@ -83,7 +72,7 @@ export default function ApartmentsPage() {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map(apt => (
-          <div key={apt.id} onClick={() => handleViewHistory(apt)} className="cursor-pointer relative group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-xl hover:scale-105 transition-all duration-300 transform">
+          <div key={apt.id} className="relative group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-xl hover:scale-105 transition-all duration-300 transform">
             <div className="flex items-start justify-between mb-3 relative z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
@@ -93,7 +82,7 @@ export default function ApartmentsPage() {
                   <h3 className="font-bold text-sm">{apt.owner_name}</h3>
                   <div className="flex items-center gap-2">
                     <p className="text-xs text-slate-500">Kat {apt.floor} · Daire {apt.number}</p>
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${apt.room_type === '3+1' ? 'bg-blue-50 text-blue-600' : 'bg-orange-50 text-orange-600'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-tight shadow-sm ${apt.room_type === '3+1' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
                       {apt.room_type}
                     </span>
                   </div>
@@ -196,47 +185,7 @@ export default function ApartmentsPage() {
         </div>
       )}
 
-      {/* History modal */}
-      {historyApt && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setHistoryApt(null)}>
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="font-bold text-lg">Daire {historyApt.number}</h3>
-                <p className="text-xs text-slate-500">Aidat Geçmişi</p>
-              </div>
-              <button onClick={() => setHistoryApt(null)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-sm">close</span>
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto pr-2 space-y-3">
-              {historyData.length > 0 ? historyData.map((record, i) => (
-                <div key={i} className="flex items-center justify-between p-3.5 border border-slate-100 rounded-xl bg-slate-50/50">
-                  <div>
-                    <p className="font-bold text-sm">{MONTHS[(record.month as number) - 1]} {record.year}</p>
-                    <p className="text-xs text-slate-500 mt-1">{record.paid_at ? new Date(record.paid_at).toLocaleDateString('tr-TR') : 'Tarih Yok'}</p>
-                  </div>
-                  <div className="text-right flex flex-col items-end">
-                    <p className="font-bold text-sm mb-1">{formatCurrency(record.amount || 0)}</p>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                      record.status === 'paid' ? 'bg-emerald-100 text-emerald-700' :
-                      record.status === 'pending' ? 'bg-amber-100 text-amber-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {record.status === 'paid' ? 'ÖDENDİ' : record.status === 'pending' ? 'BEKLİYOR' : 'ÖDENMEDİ'}
-                    </span>
-                  </div>
-                </div>
-              )) : (
-                <div className="text-center text-slate-500 py-10 flex flex-col items-center">
-                  <span className="material-symbols-outlined text-4xl mb-2 opacity-50">receipt_long</span>
-                  <p className="text-sm">Aidat geçmişi bulunmuyor.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+
 
       <div className="bg-primary/5 rounded-xl p-5 flex items-center gap-4">
         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">

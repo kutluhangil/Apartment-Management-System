@@ -23,7 +23,7 @@ export default function AidatPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [stats, setStats] = useState({ paid_count: 0, pending_count: 0, unpaid_count: 0, total: 18, collected: 0, total_expected: 0 });
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
-  const [newPeriod, setNewPeriod] = useState({ month: new Date().getMonth() + 1, year: new Date().getFullYear(), amount: 1000 });
+  const [newPeriod, setNewPeriod] = useState({ month: new Date().getMonth() + 1, year: new Date().getFullYear() });
   const [addingPeriod, setAddingPeriod] = useState(false);
   const [deletingPeriod, setDeletingPeriod] = useState(false);
   const [expenseForm, setExpenseForm] = useState({ title: '', amount: '', date: '', description: '' });
@@ -203,10 +203,6 @@ export default function AidatPage() {
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Yıl</label>
               <input type="number" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={newPeriod.year} onChange={e => setNewPeriod(p => ({ ...p, year: +e.target.value }))} />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Tutar (₺)</label>
-              <input type="number" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={newPeriod.amount} onChange={e => setNewPeriod(p => ({ ...p, amount: +e.target.value }))} />
             </div>
           </div>
           <div className="flex gap-2 mt-4">
