@@ -13,6 +13,7 @@ services:
       - FRONTEND_URL=https://cumhuriyetapartmani.com
     volumes:
       - uploads_data:/app/uploads
+      - db_data:/app/data
     expose:
       - "3001"
     networks:
@@ -26,6 +27,8 @@ services:
 
 volumes:
   uploads_data:
+    driver: local
+  db_data:
     driver: local
 
 networks:

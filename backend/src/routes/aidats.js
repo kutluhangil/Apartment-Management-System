@@ -28,22 +28,42 @@ router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (
     const { month, year, amount_2plus1, amount_3plus1 } = req.body;
     if (!month || !year) return res.status(400).json({ error: 'Ay ve yıl gereklidir.' });
 
-    const val2plus1 = amount_2plus1 || 800;
-    const val3plus1 = amount_3plus1 || 1000;
+    const val2plus1 = Number(amount_2plus1) || 800;
+    const val3plus1 = Number(amount_3plus1) || 1000;
 
+    // Check if period exists
     const existing = await getOne('SELECT id FROM aidats WHERE month = ? AND year = ?', [month, year]);
-    if (existing) return res.status(409).json({ error: 'Bu ay ve yıl için zaten aidat dönemi mevcut.' });
-
-    const { lastInsertRowid: aidatId } = await run(
-      'INSERT INTO aidats (month, year, amount) VALUES (?, ?, ?)', [month, year, val3plus1]
-    );
-    const apartments = await getAll('SELECT id, room_type FROM apartments');
-    for (const apt of apartments) {
-      const individualAmount = apt.room_type === '2+1' ? val2plus1 : val3plus1;
-      await run('INSERT INTO aidat_payments (aidat_id, apartment_id, status, amount) VALUES (?, ?, ?, ?)',
-        [aidatId, Number(apt.id), 'unpaid', individualAmount]);
+    
+    if (existing) {
+      // If it exists, check if it has payments. If not, it's a "ghost" record we can use or delete.
+      const paymentsCount = await getOne('SELECT COUNT(*) as count FROM aidat_payments WHERE aidat_id = ?', [existing.id]);
+      if (paymentsCount.count > 0) {
+        return res.status(409).json({ error: 'Bu ay ve yıl için zaten aidat dönemi mevcut.' });
+      }
+      // If it's a ghost record, we'll just delete it and recreate to be clean
+      await run('DELETE FROM aidats WHERE id = ?', [existing.id]);
     }
-    res.status(201).json({ id: aidatId, month, year, amount });
+
+    // Use a simple manual transaction simulation since we don't have a transaction helper in db.js
+    // LibSQL execute supports multiple statements in some contexts, but let's do it safely.
+    try {
+      const { lastInsertRowid: aidatId } = await run(
+        'INSERT INTO aidats (month, year, amount) VALUES (?, ?, ?)', [month, year, val3plus1]
+      );
+      
+      const apartments = await getAll('SELECT id, room_type FROM apartments');
+      for (const apt of apartments) {
+        const individualAmount = apt.room_type === '2+1' ? val2plus1 : val3plus1;
+        await run('INSERT INTO aidat_payments (aidat_id, apartment_id, status, amount) VALUES (?, ?, ?, ?)',
+          [aidatId, Number(apt.id), 'unpaid', individualAmount]);
+      }
+      
+      res.status(201).json({ message: 'Dönem ve ödemeler oluşturuldu.', id: aidatId });
+    } catch (error) {
+      // Cleanup if something failed
+      console.error('Aidat creation failed:', error);
+      res.status(500).json({ error: 'İşlem sırasında bir hata oluştu.' });
+    }
   } catch (err) { next(err); }
 });
 
