@@ -23,7 +23,7 @@ export default function AidatPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [stats, setStats] = useState({ paid_count: 0, pending_count: 0, unpaid_count: 0, total: 18, collected: 0, total_expected: 0 });
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
-  const [newPeriod, setNewPeriod] = useState({ month: new Date().getMonth() + 1, year: new Date().getFullYear() });
+  const [newPeriod, setNewPeriod] = useState({ month: new Date().getMonth() + 1, year: new Date().getFullYear(), amount: 1000 });
   const [addingPeriod, setAddingPeriod] = useState(false);
   const [deletingPeriod, setDeletingPeriod] = useState(false);
   const [expenseForm, setExpenseForm] = useState({ title: '', amount: '', date: '', description: '' });
@@ -134,7 +134,15 @@ export default function AidatPage() {
 
   const handleCreatePeriod = async () => {
     try {
-      await aidatsApi.create(newPeriod);
+      if (!newPeriod.amount || newPeriod.amount <= 0) {
+        toast.error('Lütfen geçerli bir aidat tutarı girin.');
+        return;
+      }
+      await aidatsApi.create({
+        month: newPeriod.month,
+        year: newPeriod.year,
+        amount: newPeriod.amount
+      });
       toast.success('Aidat dönemi oluşturuldu!');
       const r = await aidatsApi.getAll();
       setAidats(r.data);
@@ -192,7 +200,7 @@ export default function AidatPage() {
       {addingPeriod && (
         <div className="bg-white border border-slate-200 rounded-xl p-5">
           <h3 className="font-bold mb-4">Yeni Aidat Dönemi Oluştur</h3>
-          <div className="grid grid-cols-2 gap-4 max-w-md">
+          <div className="grid grid-cols-3 gap-4 max-w-lg">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Ay</label>
               <select className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={newPeriod.month} onChange={e => setNewPeriod(p => ({ ...p, month: +e.target.value }))}>
@@ -202,6 +210,10 @@ export default function AidatPage() {
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Yıl</label>
               <input type="number" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={newPeriod.year} onChange={e => setNewPeriod(p => ({ ...p, year: +e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-500 mb-1">Baz Aidat (₺)</label>
+              <input type="number" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={newPeriod.amount} onChange={e => setNewPeriod(p => ({ ...p, amount: +e.target.value }))} />
             </div>
           </div>
           <div className="flex gap-2 mt-4">
