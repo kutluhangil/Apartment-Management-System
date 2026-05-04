@@ -25,20 +25,21 @@ router.get('/:id/payments', authenticateToken, async (req, res, next) => {
 
 router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (req, res, next) => {
   try {
-    const { month, year, amount } = req.body;
+    const { month, year, amount_2plus1, amount_3plus1 } = req.body;
     if (!month || !year) return res.status(400).json({ error: 'Ay ve yıl gereklidir.' });
 
-    const baseAmount = amount || 1000; // Default base amount for reference
+    const val2plus1 = amount_2plus1 || 800;
+    const val3plus1 = amount_3plus1 || 1000;
 
     const existing = await getOne('SELECT id FROM aidats WHERE month = ? AND year = ?', [month, year]);
     if (existing) return res.status(409).json({ error: 'Bu ay ve yıl için zaten aidat dönemi mevcut.' });
 
     const { lastInsertRowid: aidatId } = await run(
-      'INSERT INTO aidats (month, year, amount) VALUES (?, ?, ?)', [month, year, baseAmount]
+      'INSERT INTO aidats (month, year, amount) VALUES (?, ?, ?)', [month, year, val3plus1]
     );
     const apartments = await getAll('SELECT id, room_type FROM apartments');
     for (const apt of apartments) {
-      const individualAmount = apt.room_type === '2+1' ? 800 : 1000;
+      const individualAmount = apt.room_type === '2+1' ? val2plus1 : val3plus1;
       await run('INSERT INTO aidat_payments (aidat_id, apartment_id, status, amount) VALUES (?, ?, ?, ?)',
         [aidatId, Number(apt.id), 'unpaid', individualAmount]);
     }

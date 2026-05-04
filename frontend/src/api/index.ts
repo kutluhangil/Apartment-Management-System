@@ -50,7 +50,7 @@ export const apartmentsApi = {
 // ─── Aidats ──────────────────────────────────────────────────────────────────
 export const aidatsApi = {
   getAll: () => api.get('/aidats'),
-  create: (data: { month: number; year: number; amount: number }) => api.post('/aidats', data),
+  create: (data: { month: number; year: number; amount_2plus1: number; amount_3plus1: number }) => api.post('/aidats', data),
   getPayments: (aidatId: number) => api.get(`/aidats/${aidatId}/payments`),
   updatePayment: (paymentId: number, data: { status: string; note?: string; paid_at?: string }) =>
     api.put(`/aidats/payments/${paymentId}`, data),
