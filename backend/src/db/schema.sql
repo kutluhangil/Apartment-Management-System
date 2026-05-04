@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS aidat_payments (
   aidat_id INTEGER NOT NULL REFERENCES aidats(id) ON DELETE CASCADE,
   apartment_id INTEGER NOT NULL REFERENCES apartments(id),
   status TEXT NOT NULL DEFAULT 'unpaid' CHECK(status IN ('paid', 'pending', 'unpaid')),
+  amount REAL NOT NULL DEFAULT 1000,
   paid_at DATETIME,
   note TEXT,
   UNIQUE(aidat_id, apartment_id)
