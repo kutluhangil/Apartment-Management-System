@@ -3,24 +3,24 @@ const bcrypt = require('bcryptjs');
 const { db, initDb } = require('./database');
 
 const apartments = [
-  { number: 1, owner_name: 'Turgut IRMAK', floor: 1, profession: 'Emekli', notes: '' },
-  { number: 2, owner_name: 'GÖZDE BARIK', floor: 1, profession: 'Öğretmen', notes: '' },
-  { number: 3, owner_name: 'Hakan ÇAKIR', floor: 1, profession: 'Mühendis', notes: '' },
-  { number: 4, owner_name: 'İLYAS GÜLERYÜZ', floor: 2, profession: 'Esnaf', notes: '' },
-  { number: 5, owner_name: 'A.Tahir ALTINSOY', floor: 2, profession: 'Doktor', notes: '' },
-  { number: 6, owner_name: 'R. Tolunay GENÇ', floor: 2, profession: 'Avukat', notes: 'Toplantılarda hukuki danışman' },
-  { number: 7, owner_name: 'Hanife ŞEKER', floor: 3, profession: 'Mimar', notes: '' },
-  { number: 8, owner_name: 'Kutluhan GUL', floor: 3, profession: 'Software Developer', notes: 'Sistem Yöneticisi' },
-  { number: 9, owner_name: 'SEVGİ AKKURT', floor: 3, profession: 'Muhasebeci', notes: '' },
-  { number: 10, owner_name: 'BORA DENIZ', floor: 4, profession: 'Pilot', notes: '' },
-  { number: 11, owner_name: 'Bugra ÇAKIR', floor: 4, profession: 'Öğrenci', notes: '' },
-  { number: 12, owner_name: 'KALI YAPI', floor: 4, profession: 'Şirket', notes: 'Kurumsal' },
-  { number: 13, owner_name: 'Murat ATAÇ', floor: 5, profession: 'Yönetici', notes: 'Apartman Yöneticisi' },
-  { number: 14, owner_name: 'Basri GÜZER', floor: 5, profession: 'Serbest Meslek', notes: '' },
-  { number: 15, owner_name: 'Ebru Yeğin', floor: 5, profession: 'Tasarımcı', notes: '' },
-  { number: 16, owner_name: 'KALI YAPI', floor: 6, profession: 'Şirket', notes: 'Kurumsal' },
-  { number: 17, owner_name: 'KALİ YAPI', floor: 6, profession: 'Şirket', notes: 'Kurumsal' },
-  { number: 18, owner_name: 'Bahtiyar TURAN', floor: 6, profession: 'Danışman', notes: '' },
+  { number: 1,  owner_name: 'Turgut IRMAK',     floor: 1, profession: 'Emekli',           notes: '',                           room_type: '2+1' },
+  { number: 2,  owner_name: 'GÖZDE BARIK',      floor: 1, profession: 'Öğretmen',          notes: '',                           room_type: '2+1' },
+  { number: 3,  owner_name: 'Hakan ÇAKIR',      floor: 1, profession: 'Mühendis',          notes: '',                           room_type: '2+1' },
+  { number: 4,  owner_name: 'İLYAS GÜLERYÜZ',  floor: 2, profession: 'Esnaf',             notes: '',                           room_type: '3+1' },
+  { number: 5,  owner_name: 'A.Tahir ALTINSOY', floor: 2, profession: 'Doktor',            notes: '',                           room_type: '3+1' },
+  { number: 6,  owner_name: 'R. Tolunay GENÇ',  floor: 2, profession: 'Avukat',            notes: 'Toplantılarda hukuki danışman', room_type: '2+1' },
+  { number: 7,  owner_name: 'Hanife ŞEKER',     floor: 3, profession: 'Mimar',             notes: '',                           room_type: '3+1' },
+  { number: 8,  owner_name: 'Kutluhan GUL',     floor: 3, profession: 'Software Developer', notes: 'Sistem Yöneticisi',          room_type: '3+1' },
+  { number: 9,  owner_name: 'SEVGİ AKKURT',     floor: 3, profession: 'Muhasebeci',        notes: '',                           room_type: '2+1' },
+  { number: 10, owner_name: 'BORA DENİZ',       floor: 4, profession: 'Pilot',             notes: '',                           room_type: '3+1' },
+  { number: 11, owner_name: 'Buğra ÇAKIR',      floor: 4, profession: 'Öğrenci',           notes: '',                           room_type: '3+1' },
+  { number: 12, owner_name: 'KALI YAPI',        floor: 4, profession: 'Şirket',            notes: 'Kurumsal',                   room_type: '2+1' },
+  { number: 13, owner_name: 'Murat ATAÇ',       floor: 5, profession: 'Yönetici',          notes: 'Apartman Yöneticisi',        room_type: '3+1' },
+  { number: 14, owner_name: 'Basri GÜZER',      floor: 5, profession: 'Serbest Meslek',    notes: '',                           room_type: '3+1' },
+  { number: 15, owner_name: 'Ebru KARDEŞ',      floor: 5, profession: 'Tasarımcı',         notes: '',                           room_type: '2+1' },
+  { number: 16, owner_name: 'KALI YAPI',        floor: 6, profession: 'Şirket',            notes: 'Kurumsal',                   room_type: '3+1' },
+  { number: 17, owner_name: 'KALİ YAPI',        floor: 6, profession: 'Şirket',            notes: 'Kurumsal',                   room_type: '3+1' },
+  { number: 18, owner_name: 'Bahtiyar TURAN',   floor: 6, profession: 'Danışman',          notes: '',                           room_type: '2+1' },
 ];
 
 const exec = async (sql, args = []) => db.execute({ sql, args });
@@ -50,8 +50,8 @@ async function seed() {
 
   console.log('🏘 Seeding 18 apartments...');
   for (const apt of apartments) {
-    await exec(`INSERT OR IGNORE INTO apartments (number, owner_name, floor, profession, notes) VALUES (?, ?, ?, ?, ?)`,
-      [apt.number, apt.owner_name, apt.floor, apt.profession, apt.notes]);
+    await exec(`INSERT OR IGNORE INTO apartments (number, owner_name, floor, profession, notes, room_type) VALUES (?, ?, ?, ?, ?, ?)`,
+      [apt.number, apt.owner_name, apt.floor, apt.profession, apt.notes, apt.room_type]);
   }
 
   console.log('📜 Seeding timeline...');

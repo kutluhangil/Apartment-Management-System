@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS apartments (
   floor INTEGER DEFAULT 0,
   profession TEXT,
   owner_photo TEXT,
-  notes TEXT
+  notes TEXT,
+  room_type TEXT NOT NULL DEFAULT '3+1'
 );
 
 -- Aidat periods

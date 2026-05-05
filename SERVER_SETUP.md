@@ -44,7 +44,7 @@ services:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/api/health', ...)"]
 ```
 
-**Neden curl değil node?** `node:18-alpine` imajında `curl` bulunmaz. Healthcheck her zaman `node` ile yapılmalıdır.
+**Neden curl değil node?** `node:20-alpine` imajında `curl` bulunmaz. Healthcheck her zaman `node` ile yapılmalıdır.
 
 ### Komutlar
 
@@ -68,7 +68,7 @@ docker ps --filter "name=cumhuriyet"
 
 ### Teknoloji
 
-- **Runtime:** Node.js 18 (Alpine Docker imajı)
+- **Runtime:** Node.js 20 (Alpine Docker imajı)
 - **Framework:** Express.js
 - **Veritabanı:** `@libsql/client` — geliştirmede yerel SQLite, üretimde Turso (bulut SQLite)
 - **Auth:** JWT — httpOnly cookie ile taşınır, JavaScript'ten erişilemez
