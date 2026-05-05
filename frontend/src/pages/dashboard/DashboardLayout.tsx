@@ -26,13 +26,6 @@ export default function DashboardLayout() {
     navigate('/giris', { replace: true });
   };
 
-  const visibleItems = navItems.filter(item => {
-    if (user?.role === 'sakin') {
-      return ['/dashboard', '/dashboard/daireler', '/dashboard/duyurular', '/dashboard/belgeler'].includes(item.href);
-    }
-    return true;
-  });
-
   const activeLabel = navItems.find(i =>
     i.exact ? location.pathname === i.href : location.pathname === i.href || location.pathname.startsWith(i.href + '/')
   )?.label || 'Genel Bakış';
@@ -62,7 +55,7 @@ export default function DashboardLayout() {
 
         {/* Nav */}
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          {visibleItems.map(item => {
+          {navItems.map(item => {
             const active = item.exact
               ? location.pathname === item.href
               : location.pathname === item.href || location.pathname.startsWith(item.href + '/');
@@ -126,7 +119,7 @@ export default function DashboardLayout() {
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold leading-none">{user.name || 'Kullanıcı'}</p>
                 <p className="text-[11px] text-slate-400 font-medium mt-0.5 uppercase tracking-wider">
-                  {user.role === 'admin' ? 'Admin' : user.role === 'manager' ? 'Yönetici' : 'Sakin'}
+                  {user.role === 'admin' ? 'Admin' : 'Yönetici'}
                 </p>
               </div>
               <div className="w-9 h-9 rounded-full bg-[#111] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">

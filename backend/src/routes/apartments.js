@@ -35,14 +35,14 @@ const upload = multer({
 
 const router = express.Router();
 
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const rows = await getAll('SELECT * FROM apartments ORDER BY number ASC');
     res.json(rows);
   } catch (err) { next(err); }
 });
 
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const apt = await getOne('SELECT * FROM apartments WHERE id = ?', [req.params.id]);
     if (!apt) return res.status(404).json({ error: 'Daire bulunamadı.' });
@@ -59,7 +59,7 @@ router.put('/:id', authenticateToken, authorizeRole(['admin', 'manager']), async
   } catch (err) { next(err); }
 });
 
-router.get('/:id/aidats', authenticateToken, async (req, res, next) => {
+router.get('/:id/aidats', async (req, res, next) => {
   try {
     const rows = await getAll(`
       SELECT ap.status, ap.paid_at, ap.note, a.month, a.year, a.amount

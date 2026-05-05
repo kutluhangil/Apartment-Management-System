@@ -4,13 +4,13 @@ const { authenticateToken, authorizeRole } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     res.json(await getAll('SELECT * FROM aidats ORDER BY year DESC, month DESC'));
   } catch (err) { next(err); }
 });
 
-router.get('/:id/payments', authenticateToken, async (req, res, next) => {
+router.get('/:id/payments', async (req, res, next) => {
   try {
     const rows = await getAll(`
       SELECT ap.*, a.number as apartment_number, a.owner_name, a.room_type
@@ -89,7 +89,7 @@ router.delete('/:id', authenticateToken, authorizeRole(['admin', 'manager']), as
   } catch (err) { next(err); }
 });
 
-router.get('/:id/stats', authenticateToken, async (req, res, next) => {
+router.get('/:id/stats', async (req, res, next) => {
   try {
     const aidat = await getOne('SELECT * FROM aidats WHERE id = ?', [req.params.id]);
     if (!aidat) return res.status(404).json({ error: 'Dönem bulunamadı.' });

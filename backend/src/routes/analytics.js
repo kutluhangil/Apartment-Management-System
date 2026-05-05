@@ -1,9 +1,8 @@
 const express = require('express');
 const { getAll, getOne } = require('../db/database');
-const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     // 1. Monthly Income vs Expense Chart (Current Year)
     const currentYear = new Date().getFullYear().toString();

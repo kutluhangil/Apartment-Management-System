@@ -1,7 +1,16 @@
 # Checkpoint — Cumhuriyet Apartmanı Yönetim Sistemi
 
 > Bu dosya benim için yazılmıştır. İleride konuşma başladığında projeyi hızla hatırlamak için kullanılır.
-> Son güncelleme: 2026-05-05
+> Son güncelleme: 2026-05-05 (Apple-style UI refactor)
+
+## ⚡ Önemli Mimari Değişiklik (Mayıs 2026)
+Site, tek "her-şey-burada" landing sayfasına dönüştürüldü.
+- **Sakinler giriş yapmaz** — yalnızca admin (Kutluhan) ve manager (Murat) login olur.
+- **Public landing page** (`/`) tüm bilgileri gösterir: aidat, gider, kasa, toplantı, duyuru, bakım, daireler, tarihçe.
+- **`sakin` rolü tamamen kaldırıldı.**
+- Eski `/finansal` ve `/toplanti-notlari` sayfaları silindi (landing'in bölümleri oldu).
+- GET API endpointleri public yapıldı: aidats, apartments, announcements, maintenance, analytics.
+- Mutation endpointleri (POST/PUT/DELETE) hâlâ admin/manager auth gerektirir.
 
 ---
 
