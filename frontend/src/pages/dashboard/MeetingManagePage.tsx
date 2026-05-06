@@ -6,6 +6,17 @@ import { meetingStatusConfig, MEETING_TYPES } from '../../utils/meetings';
 interface Meeting { id: number; title: string; meeting_type: string; date: string; time: string; notes: string; decisions: string[]; attendee_count: number; status: string; }
 interface Apartment { id: number; number: number; owner_name: string; floor: number; }
 
+const inp = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
+const sel = "w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all";
+const lbl = "block text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2";
+
+const statusDark: Record<string, string> = {
+  completed: 'bg-emerald-500/15 text-emerald-400',
+  scheduled: 'bg-sky-500/15 text-sky-400',
+  cancelled: 'bg-rose-500/15 text-rose-400',
+  archived:  'bg-zinc-700 text-white/40',
+};
+
 export default function MeetingManagePage() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -22,7 +33,7 @@ export default function MeetingManagePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.date) { toast.error('Konu ve tarih zorunludur.'); return; }
+    if (!form.title || !form.date) return toast.error('Konu ve tarih zorunludur.');
     setLoading(true);
     const decisions = decisionsText.split('\n').map(d => d.trim()).filter(Boolean);
     try {
@@ -42,94 +53,96 @@ export default function MeetingManagePage() {
   };
 
   return (
-    <div className="p-5 md:p-8 space-y-6">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Toplantı Yönetimi</h1>
-        <p className="text-slate-500 text-sm mt-1">Yeni toplantılar oluşturun ve geçmiş kararları inceleyin.</p>
+        <h1 className="text-2xl font-black tracking-tight text-white">Toplantı Yönetimi</h1>
+        <p className="text-white/40 text-sm mt-1">Yeni toplantılar oluşturun ve geçmiş kararları inceleyin.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Form */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Left: form + list */}
         <div className="lg:col-span-2 space-y-5">
-          <div className="bg-white p-6 rounded-xl border border-slate-200">
-            <h3 className="text-lg font-bold mb-5 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">add_circle</span> Yeni Toplantı Oluştur
+          {/* Form */}
+          <div className="bg-zinc-900 border border-white/[0.07] p-6 rounded-2xl">
+            <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2">
+              <span className="material-symbols-outlined text-indigo-400 text-[18px]">add_circle</span>
+              Yeni Toplantı Oluştur
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1.5">Toplantı Konusu</label>
-                <input className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Örn: 2025 Olağan Genel Kurul" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+                <label className={lbl}>Toplantı Konusu</label>
+                <input className={inp} placeholder="Örn: 2025 Olağan Genel Kurul" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1.5">Toplantı Türü</label>
-                  <select className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.meeting_type} onChange={e => setForm(f => ({ ...f, meeting_type: e.target.value }))}>
-                    {MEETING_TYPES.map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
+                  <label className={lbl}>Toplantı Türü</label>
+                  <select className={sel} value={form.meeting_type} onChange={e => setForm(f => ({ ...f, meeting_type: e.target.value }))}>
+                    {MEETING_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1.5">Durum</label>
-                  <select className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
+                  <label className={lbl}>Durum</label>
+                  <select className={sel} value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
                     {Object.entries(meetingStatusConfig).map(([v, { label }]) => <option key={v} value={v}>{label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1.5">Tarih</label>
-                  <input type="date" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
+                  <label className={lbl}>Tarih</label>
+                  <input type="date" className={inp} value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1.5">Saat</label>
-                  <input type="time" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
+                  <label className={lbl}>Saat</label>
+                  <input type="time" className={inp} value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1.5">Toplantı Notları ve Gündem</label>
-                <textarea className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" rows={4} placeholder="Gündem maddelerini buraya yazınız..." value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
+                <label className={lbl}>Toplantı Notları ve Gündem</label>
+                <textarea className={`${inp} resize-none`} rows={3} placeholder="Gündem maddelerini buraya yazınız..." value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1.5">Alınan Kararlar <span className="text-slate-400 font-normal">(her satıra bir karar)</span></label>
-                <textarea className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" rows={3} placeholder="Her satıra bir karar yazın..." value={decisionsText} onChange={e => setDecisionsText(e.target.value)} />
+                <label className={lbl}>Alınan Kararlar <span className="text-white/20 normal-case font-normal">(her satıra bir karar)</span></label>
+                <textarea className={`${inp} resize-none`} rows={3} placeholder="Her satıra bir karar yazın..." value={decisionsText} onChange={e => setDecisionsText(e.target.value)} />
               </div>
               <div className="flex justify-end">
-                <button type="submit" disabled={loading} className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:opacity-90 transition-opacity disabled:opacity-60">
+                <button type="submit" disabled={loading}
+                  className="bg-gradient-to-br from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/20">
                   {loading ? 'Kaydediliyor...' : 'Toplantıyı Kaydet'}
                 </button>
               </div>
             </form>
           </div>
 
-          {/* Recent meetings */}
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="p-5 border-b border-slate-100">
-              <h3 className="font-bold">Toplantı Kayıtları</h3>
+          {/* Meeting list */}
+          <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
+            <div className="p-5 border-b border-white/[0.07]">
+              <h3 className="font-bold text-white text-sm">Toplantı Kayıtları</h3>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-white/[0.05]">
               {meetings.length === 0 ? (
-                <div className="p-6 text-center text-slate-500 text-sm">Henüz toplantı kaydı yok.</div>
+                <div className="p-8 text-center text-white/30 text-sm">Henüz toplantı kaydı yok.</div>
               ) : meetings.map(m => {
-                const s = meetingStatusConfig[m.status] || meetingStatusConfig.archived;
+                const scls = statusDark[m.status] || statusDark.archived;
+                const slabel = (meetingStatusConfig[m.status] || meetingStatusConfig.archived).label;
                 return (
-                  <div key={m.id} className="p-5 hover:bg-slate-50 transition-colors">
+                  <div key={m.id} className="p-5 hover:bg-white/[0.03] transition-colors">
                     <div className="flex justify-between items-start gap-3 mb-2">
                       <div>
-                        <span className="text-xs text-slate-400 uppercase tracking-wider">{m.meeting_type}</span>
-                        <h4 className="font-semibold mt-0.5">{m.title}</h4>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">{m.meeting_type}</span>
+                        <h4 className="font-bold text-white mt-0.5">{m.title}</h4>
                       </div>
-                      <div className="flex items-start gap-2 flex-shrink-0">
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded ${s.cls}`}>{s.label}</span>
-                        <button onClick={() => handleDelete(m.id)} className="p-1 text-slate-400 hover:text-red-500 transition-colors">
-                          <span className="material-symbols-outlined text-lg">delete</span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${scls}`}>{slabel}</span>
+                        <button onClick={() => handleDelete(m.id)} className="p-1 text-white/20 hover:text-rose-400 transition-colors">
+                          <span className="material-symbols-outlined text-[18px]">delete</span>
                         </button>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-3 text-xs text-slate-500">
+                    <div className="flex flex-wrap gap-4 text-xs text-white/40">
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">calendar_today</span>{new Date(m.date).toLocaleDateString('tr-TR')}</span>
                       {m.time && <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">schedule</span>{m.time}</span>}
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">group</span>{m.attendee_count} Daire</span>
                     </div>
-                    {m.notes && <p className="text-sm text-slate-600 mt-2 line-clamp-2">{m.notes}</p>}
+                    {m.notes && <p className="text-sm text-white/50 mt-2 line-clamp-2">{m.notes}</p>}
                   </div>
                 );
               })}
@@ -137,31 +150,35 @@ export default function MeetingManagePage() {
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Right sidebar */}
         <div className="space-y-5">
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="p-5 border-b border-slate-200 flex items-center justify-between">
-              <h3 className="font-bold">Daire Listesi</h3>
-              <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500">18 Daire</span>
+          {/* Apartments list */}
+          <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
+            <div className="p-5 border-b border-white/[0.07] flex items-center justify-between">
+              <h3 className="font-bold text-white text-sm">Daire Listesi</h3>
+              <span className="text-xs bg-white/5 border border-white/10 px-2.5 py-1 rounded-full text-white/40 font-bold">18 Daire</span>
             </div>
-            <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+            <div className="divide-y divide-white/[0.05] max-h-80 overflow-y-auto">
               {apartments.map(apt => (
-                <div key={apt.id} className="p-3.5 flex items-center gap-3 hover:bg-slate-50">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">{String(apt.number).padStart(2,'0')}</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate">{apt.owner_name}</p>
-                    <p className="text-xs text-slate-500">Kat {apt.floor}</p>
+                <div key={apt.id} className="p-3.5 flex items-center gap-3 hover:bg-white/[0.03] transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-300 flex items-center justify-center text-xs font-black flex-shrink-0">
+                    {String(apt.number).padStart(2, '0')}
                   </div>
-                  <span className="material-symbols-outlined text-slate-300 text-lg">chevron_right</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">{apt.owner_name}</p>
+                    <p className="text-xs text-white/30">Kat {apt.floor}</p>
+                  </div>
+                  <span className="material-symbols-outlined text-white/20 text-lg">chevron_right</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-primary text-white p-6 rounded-xl">
-            <p className="text-sm opacity-80 mb-1">Toplam Toplantı</p>
-            <h4 className="text-3xl font-black mb-3">{meetings.length}</h4>
-            <p className="text-xs opacity-60 uppercase tracking-widest">Kayıtlı Toplantı</p>
+          {/* Total meetings */}
+          <div className="bg-gradient-to-br from-sky-400 via-blue-500 to-blue-700 p-6 rounded-2xl shadow-lg shadow-blue-500/20">
+            <p className="text-sm font-bold text-white/60 mb-1">Toplam Toplantı</p>
+            <h4 className="text-4xl font-black text-white mb-3">{meetings.length}</h4>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-white/50">Kayıtlı Toplantı</p>
           </div>
         </div>
       </div>

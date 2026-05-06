@@ -28,28 +28,28 @@ export default function DashboardLayout() {
 
   const activeLabel = navItems.find(i =>
     i.exact ? location.pathname === i.href : location.pathname === i.href || location.pathname.startsWith(i.href + '/')
-  )?.label || 'Genel Bakış';
+  )?.label || 'Panel';
 
   return (
-    <div className="flex min-h-screen bg-[#fafaf9] text-slate-900">
+    <div className="flex min-h-screen bg-zinc-950 text-white">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed md:sticky top-0 h-screen w-64 border-r border-slate-200 bg-white flex flex-col z-50 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <aside className={`fixed md:sticky top-0 h-screen w-64 border-r border-white/[0.07] bg-zinc-900 flex flex-col z-50 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         {/* Logo */}
-        <div className="p-5 flex items-center gap-3 border-b border-slate-100">
-          <div className="w-9 h-9 rounded-xl bg-[#111] flex items-center justify-center flex-shrink-0">
+        <div className="p-5 flex items-center gap-3 border-b border-white/[0.07]">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/30">
             <span className="material-symbols-outlined text-white text-[18px]">apartment</span>
           </div>
           <div className="min-w-0">
-            <h1 className="text-sm font-bold leading-tight truncate">Cumhuriyet Apt.</h1>
-            <p className="text-[11px] text-slate-400 font-medium">Yönetim Paneli</p>
+            <h1 className="text-[13px] font-bold leading-tight truncate text-white">Cumhuriyet Apt.</h1>
+            <p className="text-[11px] text-white/40 font-medium">Yönetim Paneli</p>
           </div>
         </div>
 
@@ -66,11 +66,11 @@ export default function DashboardLayout() {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                   active
-                    ? 'bg-[#111] text-white'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-indigo-500/15 text-indigo-200'
+                    : 'text-white/50 hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <span className={`material-symbols-outlined text-[20px] ${active ? 'text-white' : 'text-slate-400'}`}>
+                <span className={`material-symbols-outlined text-[20px] ${active ? 'text-indigo-300' : 'text-white/30'}`}>
                   {item.icon}
                 </span>
                 {item.label}
@@ -80,17 +80,17 @@ export default function DashboardLayout() {
         </nav>
 
         {/* Footer */}
-        <div className="p-3 border-t border-slate-100 space-y-0.5">
+        <div className="p-3 border-t border-white/[0.07] space-y-0.5">
           <Link
             to="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-white/40 hover:bg-white/5 hover:text-white transition-all"
           >
-            <span className="material-symbols-outlined text-[20px] text-slate-400">open_in_new</span>
+            <span className="material-symbols-outlined text-[20px] text-white/30">open_in_new</span>
             Siteye Dön
           </Link>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-all"
           >
             <span className="material-symbols-outlined text-[20px]">logout</span>
             Çıkış Yap
@@ -101,15 +101,15 @@ export default function DashboardLayout() {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-14 sm:h-16 border-b border-slate-200 bg-white/90 apple-blur flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30">
+        <header className="h-14 sm:h-16 border-b border-white/[0.07] bg-zinc-950/80 apple-blur flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
+              className="md:hidden p-2 rounded-xl hover:bg-white/5 transition-colors"
             >
-              <span className="material-symbols-outlined text-slate-500">menu</span>
+              <span className="material-symbols-outlined text-white/60">menu</span>
             </button>
-            <span className="text-sm font-semibold text-slate-400 hidden sm:block">
+            <span className="text-sm font-semibold text-white/40 hidden sm:block tracking-wide">
               {activeLabel}
             </span>
           </div>
@@ -117,12 +117,12 @@ export default function DashboardLayout() {
           {user && (
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold leading-none">{user.name || 'Kullanıcı'}</p>
-                <p className="text-[11px] text-slate-400 font-medium mt-0.5 uppercase tracking-wider">
+                <p className="text-sm font-bold leading-none text-white">{user.name || 'Kullanıcı'}</p>
+                <p className="text-[11px] text-white/40 font-medium mt-0.5 uppercase tracking-wider">
                   {user.role === 'admin' ? 'Admin' : 'Yönetici'}
                 </p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-[#111] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md shadow-indigo-500/30">
                 {user.name ? user.name.charAt(0).toUpperCase() : '?'}
               </div>
             </div>

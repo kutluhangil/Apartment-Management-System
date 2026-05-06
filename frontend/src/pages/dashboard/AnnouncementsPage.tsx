@@ -3,23 +3,20 @@ import { announcementsApi } from '../../api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 
+const inp = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
+const lbl = "block text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2";
+
 export default function AnnouncementsPage() {
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ title: '', message: '', date: '' });
 
-  useEffect(() => {
-    fetchAnnouncements();
-  }, []);
+  useEffect(() => { fetchAnnouncements(); }, []);
 
   const fetchAnnouncements = async () => {
-    try {
-      const res = await announcementsApi.getAll();
-      setAnnouncements(res.data);
-    } catch {
-      toast.error('Duyurular yüklenemedi.');
-    }
+    try { const res = await announcementsApi.getAll(); setAnnouncements(res.data); }
+    catch { toast.error('Duyurular yüklenemedi.'); }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -27,79 +24,90 @@ export default function AnnouncementsPage() {
     try {
       await announcementsApi.create(form);
       toast.success('Duyuru eklendi!');
-      setAdding(false);
-      setForm({ title: '', message: '', date: '' });
+      setAdding(false); setForm({ title: '', message: '', date: '' });
       fetchAnnouncements();
-    } catch {
-      toast.error('Duyuru eklenirken bir hata oluştu.');
-    }
+    } catch { toast.error('Duyuru eklenirken hata oluştu.'); }
   };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('Emin misiniz?')) return;
-    try {
-      await announcementsApi.delete(id);
-      toast.success('Duyuru silindi!');
-      fetchAnnouncements();
-    } catch {
-      toast.error('Silme başarısız.');
-    }
+    try { await announcementsApi.delete(id); toast.success('Duyuru silindi!'); fetchAnnouncements(); }
+    catch { toast.error('Silme başarısız.'); }
   };
 
   return (
-    <div className="p-5 md:p-8 space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Duyurular</h1>
-          <p className="text-slate-500 text-sm mt-1">Önemli apartman duyuruları ve bilgilendirmeler</p>
+          <h1 className="text-2xl font-black tracking-tight text-white">Duyurular</h1>
+          <p className="text-white/40 text-sm mt-1">Önemli apartman duyuruları ve bilgilendirmeler</p>
         </div>
         {(user?.role === 'admin' || user?.role === 'manager') && (
-          <button onClick={() => setAdding(!adding)} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
-            <span className="material-symbols-outlined text-lg">{adding ? 'close' : 'add'}</span>
+          <button onClick={() => setAdding(!adding)}
+            className="bg-gradient-to-br from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
+            <span className="material-symbols-outlined text-[18px]">{adding ? 'close' : 'add'}</span>
             {adding ? 'İptal' : 'Yeni Duyuru'}
           </button>
         )}
       </div>
 
       {adding && (
-        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
-          <form onSubmit={handleCreate} className="space-y-4 max-w-lg">
+        <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl p-6">
+          <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2">
+            <span className="material-symbols-outlined text-pink-400 text-[18px]">campaign</span>
+            Yeni Duyuru Oluştur
+          </h3>
+          <form onSubmit={handleCreate} className="space-y-4 max-w-xl">
             <div>
-              <label className="block text-sm font-medium mb-1.5">Başlık</label>
-              <input required className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+              <label className={lbl}>Başlık</label>
+              <input required className={inp} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Tarih</label>
-              <input required type="date" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
+              <label className={lbl}>Tarih</label>
+              <input required type="date" className={inp} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Mesaj</label>
-              <textarea required rows={4} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
+              <label className={lbl}>Mesaj</label>
+              <textarea required rows={5} className={`${inp} resize-none`} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
             </div>
-            <button type="submit" className="bg-primary text-white px-6 py-2 rounded-lg text-sm font-bold">Yayınla</button>
+            <button type="submit"
+              className="bg-gradient-to-br from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-500/20">
+              Yayınla
+            </button>
           </form>
         </div>
       )}
 
       <div className="space-y-4">
         {announcements.map(ann => (
-          <div key={ann.id} className="bg-white p-6 rounded-xl border border-slate-200 relative group">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-lg text-primary">{ann.title}</h3>
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">{new Date(ann.date).toLocaleDateString('tr-TR')}</span>
+          <div key={ann.id} className="bg-zinc-900 border border-white/[0.07] p-6 rounded-2xl group hover:border-pink-500/20 transition-all">
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-pink-500/15 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="material-symbols-outlined text-pink-400 text-[16px]">campaign</span>
+                </div>
+                <h3 className="font-black text-white text-base leading-tight">{ann.title}</h3>
+              </div>
+              <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                <span className="text-xs font-bold text-white/30 bg-white/5 px-3 py-1 rounded-full border border-white/[0.06]">
+                  {new Date(ann.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </span>
                 {(user?.role === 'admin' || user?.role === 'manager') && (
-                  <button onClick={() => handleDelete(ann.id)} className="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => handleDelete(ann.id)}
+                    className="text-white/20 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all p-1">
                     <span className="material-symbols-outlined text-[20px]">delete</span>
                   </button>
                 )}
               </div>
             </div>
-            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{ann.message}</p>
+            <p className="text-white/60 leading-relaxed whitespace-pre-wrap text-sm pl-11">{ann.message}</p>
           </div>
         ))}
         {announcements.length === 0 && (
-          <p className="text-slate-500 text-center py-10">Henüz bir duyuru bulunmuyor.</p>
+          <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl p-12 text-center text-white/30">
+            <span className="material-symbols-outlined text-4xl mb-3 block">campaign</span>
+            Henüz bir duyuru bulunmuyor.
+          </div>
         )}
       </div>
     </div>
