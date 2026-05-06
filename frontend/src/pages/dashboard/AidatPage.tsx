@@ -37,6 +37,7 @@ export default function AidatPage() {
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [creatingPeriod, setCreatingPeriod] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -112,13 +113,15 @@ export default function AidatPage() {
   const handleCreatePeriod = async () => {
     if (!newPeriod.amount_2plus1 || newPeriod.amount_2plus1 <= 0 || !newPeriod.amount_3plus1 || newPeriod.amount_3plus1 <= 0)
       return toast.error("Lütfen geçerli aidat tutarları girin.");
+    setCreatingPeriod(true);
     try {
       await aidatsApi.create(newPeriod);
       toast.success("Aidat dönemi oluşturuldu!");
       const r = await aidatsApi.getAll(); setAidats(r.data);
       if (r.data.length > 0) selectAidat(r.data[0]);
       setAddingPeriod(false);
-    } catch (e: any) { toast.error(e.response?.data?.error || "Hata oluştu."); }
+    } catch (e: any) { toast.error(e.response?.data?.error || "Sunucu hatası. Lütfen tekrar deneyin."); }
+    finally { setCreatingPeriod(false); }
   };
 
   const handleExpenseSubmit = async (e: React.FormEvent) => {
@@ -172,7 +175,10 @@ export default function AidatPage() {
             <div><label className={lbl}>3+1 Aidat (₺)</label><input type="number" className={inp} value={newPeriod.amount_3plus1} onChange={e => setNewPeriod(p => ({ ...p, amount_3plus1: +e.target.value }))} /></div>
           </div>
           <div className="flex gap-2 mt-5">
-            <button onClick={handleCreatePeriod} className={`${btnP} px-5 py-2.5 rounded-xl text-sm`}>Oluştur</button>
+            <button onClick={handleCreatePeriod} disabled={creatingPeriod} className={`${btnP} px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 disabled:opacity-60`}>
+              {creatingPeriod && <span className="material-symbols-outlined text-base animate-spin">refresh</span>}
+              {creatingPeriod ? 'Oluşturuluyor...' : 'Oluştur'}
+            </button>
             <button onClick={() => setAddingPeriod(false)} className={`${btnS} px-5 py-2.5 rounded-xl text-sm font-semibold`}>İptal</button>
           </div>
         </div>

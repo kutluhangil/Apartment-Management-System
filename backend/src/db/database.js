@@ -47,6 +47,31 @@ const initDb = async () => {
       // table or index already exists – safe to ignore
     }
   }
+
+  // Auto-migrations: add columns that were added after initial schema deployment.
+  // Each entry is idempotent — safely skipped if the column already exists.
+  const columnMigrations = [
+    { table: 'aidat_payments', column: 'amount',    sql: 'ALTER TABLE aidat_payments ADD COLUMN amount REAL NOT NULL DEFAULT 1000' },
+    { table: 'apartments',     column: 'room_type', sql: "ALTER TABLE apartments ADD COLUMN room_type TEXT NOT NULL DEFAULT '3+1'" },
+    { table: 'apartments',     column: 'profession', sql: 'ALTER TABLE apartments ADD COLUMN profession TEXT' },
+    { table: 'apartments',     column: 'owner_photo', sql: 'ALTER TABLE apartments ADD COLUMN owner_photo TEXT' },
+    { table: 'apartments',     column: 'notes',      sql: 'ALTER TABLE apartments ADD COLUMN notes TEXT' },
+    { table: 'timeline',       column: 'image_path', sql: 'ALTER TABLE timeline ADD COLUMN image_path TEXT' },
+  ];
+
+  for (const { table, column, sql } of columnMigrations) {
+    try {
+      const info = await db.execute(`PRAGMA table_info(${table})`);
+      const exists = info.rows.some(row => row.name === column);
+      if (!exists) {
+        await db.execute(sql);
+        console.log(`[migration] Added column "${column}" to "${table}"`);
+      }
+    } catch (e) {
+      console.error(`[migration] Failed for ${table}.${column}:`, e.message);
+    }
+  }
+
   if (isLocal) {
     await db.execute('PRAGMA foreign_keys=ON');
   }
