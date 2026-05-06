@@ -38,6 +38,7 @@ export default function AidatPage() {
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
   const [creatingPeriod, setCreatingPeriod] = useState(false);
+  const [updatingPayment, setUpdatingPayment] = useState<number | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -86,14 +87,20 @@ export default function AidatPage() {
   };
 
   const handleStatusChange = async (paymentId: number, status: string) => {
+    setUpdatingPayment(paymentId);
     try {
       await aidatsApi.updatePayment(paymentId, { status, paid_at: status === "paid" ? new Date().toISOString() : "" });
       if (selectedAidat) {
-        const r = await aidatsApi.getPayments(selectedAidat.id); setPayments(r.data);
-        const s = await aidatsApi.getStats(selectedAidat.id); setStats(s.data);
+        const [pr, sr] = await Promise.all([
+          aidatsApi.getPayments(selectedAidat.id),
+          aidatsApi.getStats(selectedAidat.id),
+        ]);
+        setPayments(pr.data);
+        setStats(sr.data);
       }
       toast.success("Durum güncellendi.");
     } catch { toast.error("Güncelleme başarısız."); }
+    finally { setUpdatingPayment(null); }
   };
 
   const handleDeletePeriod = async () => {
@@ -120,7 +127,17 @@ export default function AidatPage() {
       const r = await aidatsApi.getAll(); setAidats(r.data);
       if (r.data.length > 0) selectAidat(r.data[0]);
       setAddingPeriod(false);
-    } catch (e: any) { toast.error(e.response?.data?.error || "Sunucu hatası. Lütfen tekrar deneyin."); }
+    } catch (e: any) {
+      if (e.response?.status === 409) {
+        // Period already exists — find it and select it automatically
+        const r = await aidatsApi.getAll(); setAidats(r.data);
+        const found = r.data.find((a: Aidat) => a.month === newPeriod.month && a.year === newPeriod.year);
+        if (found) { selectAidat(found); toast.success(`${MONTHS[found.month - 1]} ${found.year} dönemi zaten oluşturulmuş, seçildi.`); }
+        setAddingPeriod(false);
+      } else {
+        toast.error(e.response?.data?.error || "Sunucu hatası. Lütfen tekrar deneyin.");
+      }
+    }
     finally { setCreatingPeriod(false); }
   };
 
@@ -257,12 +274,18 @@ export default function AidatPage() {
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${s.cls}`}>{s.label}</span>
                       </td>
                       <td className="px-5 py-3.5">
+                        {updatingPayment === p.id ? (
+                          <span className="flex items-center gap-1 text-xs text-indigo-500 dark:text-indigo-400 font-semibold">
+                            <span className="material-symbols-outlined text-sm animate-spin">refresh</span> Kaydediliyor...
+                          </span>
+                        ) : (
                         <select value={p.status} onChange={e => handleStatusChange(p.id, e.target.value)}
                           className="text-xs bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-gray-900 dark:text-white rounded-lg py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer">
                           <option value="paid">Ödendi</option>
                           <option value="pending">Beklemede</option>
                           <option value="unpaid">Ödenmedi</option>
                         </select>
+                        )}
                       </td>
                     </tr>
                   );
