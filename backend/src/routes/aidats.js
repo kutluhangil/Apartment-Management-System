@@ -36,12 +36,12 @@ router.post('/', authenticateToken, authorizeRole(['admin', 'manager']), async (
     
     if (existing) {
       // If it exists, check if it has payments. If not, it's a "ghost" record we can use or delete.
-      const paymentsCount = await getOne('SELECT COUNT(*) as count FROM aidat_payments WHERE aidat_id = ?', [existing.id]);
-      if (paymentsCount.count > 0) {
+      const paymentsCount = await getOne('SELECT COUNT(*) as count FROM aidat_payments WHERE aidat_id = ?', [Number(existing.id)]);
+      if (Number(paymentsCount.count) > 0) {
         return res.status(409).json({ error: 'Bu ay ve yıl için zaten aidat dönemi mevcut.' });
       }
       // If it's a ghost record, we'll just delete it and recreate to be clean
-      await run('DELETE FROM aidats WHERE id = ?', [existing.id]);
+      await run('DELETE FROM aidats WHERE id = ?', [Number(existing.id)]);
     }
 
     // Use a simple manual transaction simulation since we don't have a transaction helper in db.js
@@ -71,8 +71,9 @@ router.put('/payments/:id', authenticateToken, authorizeRole(['admin', 'manager'
   try {
     const { status, note, paid_at } = req.body;
     const paidAt = status === 'paid' ? (paid_at || new Date().toISOString()) : null;
-    await run('UPDATE aidat_payments SET status = ?, note = ?, paid_at = ? WHERE id = ?',
-      [status, note || null, paidAt, req.params.id]);
+    const result = await run('UPDATE aidat_payments SET status = ?, note = ?, paid_at = ? WHERE id = ?',
+      [status, note || null, paidAt, Number(req.params.id)]);
+    if (result.changes === 0) return res.status(404).json({ error: 'Ödeme kaydı bulunamadı.' });
     res.json({ success: true });
   } catch (err) { next(err); }
 });

@@ -39,18 +39,38 @@ export default function AidatPage() {
   const [loading, setLoading] = useState(false);
   const [creatingPeriod, setCreatingPeriod] = useState(false);
   const [updatingPayment, setUpdatingPayment] = useState<number | null>(null);
+  const [loadingPayments, setLoadingPayments] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  const selectAidat = async (aidat: Aidat) => {
+    setSelectedAidat(aidat);
+    setLoadingPayments(true);
+    try {
+      const [pr, sr] = await Promise.all([
+        aidatsApi.getPayments(aidat.id),
+        aidatsApi.getStats(aidat.id),
+      ]);
+      setPayments(pr.data);
+      setStats(sr.data);
+    } catch {
+      toast.error("Dönem verisi yüklenemedi. Sayfayı yenileyin.");
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+
   useEffect(() => {
-    aidatsApi.getAll().then(r => { setAidats(r.data); if (r.data.length > 0) selectAidat(r.data[0]); }).catch(() => {});
+    (async () => {
+      try {
+        const r = await aidatsApi.getAll();
+        setAidats(r.data);
+        if (r.data.length > 0) await selectAidat(r.data[0]);
+      } catch {
+        toast.error("Aidat dönemleri yüklenemedi.");
+      }
+    })();
     expensesApi.getAll({ type: "expense", limit: 5 }).then(r => setRecentExpenses(r.data.expenses)).catch(() => {});
   }, []);
-
-  const selectAidat = (aidat: Aidat) => {
-    setSelectedAidat(aidat);
-    aidatsApi.getPayments(aidat.id).then(r => setPayments(r.data)).catch(() => {});
-    aidatsApi.getStats(aidat.id).then(r => setStats(r.data)).catch(() => {});
-  };
 
   const exportPDF = () => {
     if (!selectedAidat) return toast.error("Lütfen bir aidat dönemi seçin.");
@@ -90,17 +110,25 @@ export default function AidatPage() {
     setUpdatingPayment(paymentId);
     try {
       await aidatsApi.updatePayment(paymentId, { status, paid_at: status === "paid" ? new Date().toISOString() : "" });
-      if (selectedAidat) {
+    } catch {
+      toast.error("Güncelleme başarısız.");
+      setUpdatingPayment(null);
+      return;
+    }
+    toast.success("Durum güncellendi.");
+    if (selectedAidat) {
+      try {
         const [pr, sr] = await Promise.all([
           aidatsApi.getPayments(selectedAidat.id),
           aidatsApi.getStats(selectedAidat.id),
         ]);
         setPayments(pr.data);
         setStats(sr.data);
+      } catch {
+        // Update succeeded; list will refresh on next page load
       }
-      toast.success("Durum güncellendi.");
-    } catch { toast.error("Güncelleme başarısız."); }
-    finally { setUpdatingPayment(null); }
+    }
+    setUpdatingPayment(null);
   };
 
   const handleDeletePeriod = async () => {
@@ -112,7 +140,7 @@ export default function AidatPage() {
       await aidatsApi.delete(selectedAidat.id);
       toast.success(`${label} dönemi silindi.`);
       const r = await aidatsApi.getAll(); setAidats(r.data);
-      if (r.data.length > 0) selectAidat(r.data[0]); else { setSelectedAidat(null); setPayments([]); }
+      if (r.data.length > 0) await selectAidat(r.data[0]); else { setSelectedAidat(null); setPayments([]); }
     } catch (e: any) { toast.error(e.response?.data?.error || "Silme başarısız."); }
     finally { setDeletingPeriod(false); }
   };
@@ -125,14 +153,14 @@ export default function AidatPage() {
       await aidatsApi.create(newPeriod);
       toast.success("Aidat dönemi oluşturuldu!");
       const r = await aidatsApi.getAll(); setAidats(r.data);
-      if (r.data.length > 0) selectAidat(r.data[0]);
+      if (r.data.length > 0) await selectAidat(r.data[0]);
       setAddingPeriod(false);
     } catch (e: any) {
       if (e.response?.status === 409) {
         // Period already exists — find it and select it automatically
         const r = await aidatsApi.getAll(); setAidats(r.data);
-        const found = r.data.find((a: Aidat) => a.month === newPeriod.month && a.year === newPeriod.year);
-        if (found) { selectAidat(found); toast.success(`${MONTHS[found.month - 1]} ${found.year} dönemi zaten oluşturulmuş, seçildi.`); }
+        const found = r.data.find((a: Aidat) => Number(a.month) === newPeriod.month && Number(a.year) === newPeriod.year);
+        if (found) { await selectAidat(found); toast.success(`${MONTHS[found.month - 1]} ${found.year} dönemi zaten oluşturulmuş, seçildi.`); }
         setAddingPeriod(false);
       } else {
         toast.error(e.response?.data?.error || "Sunucu hatası. Lütfen tekrar deneyin.");
@@ -258,7 +286,20 @@ export default function AidatPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {payments.map(p => {
+                {loadingPayments ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-12 text-center text-sm text-gray-400 dark:text-white/40">
+                      <span className="material-symbols-outlined text-2xl animate-spin block mb-2">refresh</span>
+                      Yükleniyor...
+                    </td>
+                  </tr>
+                ) : payments.length === 0 && selectedAidat ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-12 text-center text-sm text-gray-400 dark:text-white/40">
+                      Bu dönem için ödeme kaydı bulunamadı.
+                    </td>
+                  </tr>
+                ) : payments.map(p => {
                   const s = statusConfig[p.status as keyof typeof statusConfig] || statusConfig.unpaid;
                   return (
                     <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors">

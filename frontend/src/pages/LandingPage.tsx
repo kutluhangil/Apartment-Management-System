@@ -299,19 +299,24 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-9 gap-1 mt-auto">
-                {payments.map(p => {
-                  const color = p.status === 'paid' ? 'bg-white' : p.status === 'pending' ? 'bg-amber-300' : 'bg-rose-400';
-                  return (
-                    <div
-                      key={p.id}
-                      title={`Daire ${p.apartment_number} — ${p.owner_name}`}
-                      className={`aspect-square rounded-md ${color} flex items-center justify-center text-[8px] font-black ${p.status === 'paid' ? 'text-emerald-700' : 'text-black/70'}`}
-                    >
-                      {p.apartment_number}
+              <div className="mt-auto overflow-y-auto max-h-[140px] pr-0.5 space-y-0.5 scrollbar-none">
+                {payments.length === 0 ? (
+                  <p className="text-white/40 text-[11px] text-center py-4">Dönem verisi yükleniyor...</p>
+                ) : payments.map(p => (
+                  <div key={p.id} className="flex items-center justify-between gap-2 py-1 border-b border-white/10 last:border-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-[10px] font-black text-white/50 w-5 text-right flex-shrink-0">{p.apartment_number}</span>
+                      <span className="text-[11px] font-semibold text-white/90 truncate">{p.owner_name}</span>
                     </div>
-                  );
-                })}
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0 ${
+                      p.status === 'paid'    ? 'bg-white/25 text-white' :
+                      p.status === 'pending' ? 'bg-amber-400/30 text-amber-200' :
+                                              'bg-rose-500/30 text-rose-200'
+                    }`}>
+                      {p.status === 'paid' ? 'Ödendi' : p.status === 'pending' ? 'Bekliyor' : 'Ödenmedi'}
+                    </span>
+                  </div>
+                ))}
               </div>
 
               {aidats.length > 1 && (
