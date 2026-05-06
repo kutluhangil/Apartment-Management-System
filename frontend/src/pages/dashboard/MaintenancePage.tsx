@@ -3,15 +3,16 @@ import { maintenanceApi } from '../../api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 
-const inp = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
-const lbl = "block text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2";
+const card = "bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/[0.07]";
+const inp = "w-full px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
+const lbl = "block text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-white/40 mb-2";
 
 const getStatus = (nextDate: string) => {
   if (!nextDate) return null;
   const days = Math.floor((new Date(nextDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  if (days < 0) return { label: 'Gecikmiş', cls: 'bg-rose-500/15 text-rose-400', days };
-  if (days <= 7) return { label: 'Yaklaşıyor', cls: 'bg-amber-500/15 text-amber-400', days };
-  return { label: 'Planlı', cls: 'bg-emerald-500/15 text-emerald-400', days };
+  if (days < 0) return { label: 'Gecikmiş', cls: 'bg-rose-50 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400', days };
+  if (days <= 7) return { label: 'Yaklaşıyor', cls: 'bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400', days };
+  return { label: 'Planlı', cls: 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400', days };
 };
 
 export default function MaintenancePage() {
@@ -47,8 +48,8 @@ export default function MaintenancePage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-white">Bakım Takibi</h1>
-          <p className="text-white/40 text-sm mt-1">Asansör, kazan ve diğer periyodik bakımlar</p>
+          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">Bakım Takibi</h1>
+          <p className="text-gray-400 dark:text-white/40 text-sm mt-1">Asansör, kazan ve diğer periyodik bakımlar</p>
         </div>
         {(user?.role === 'admin' || user?.role === 'manager') && (
           <button onClick={() => setAdding(!adding)}
@@ -60,9 +61,9 @@ export default function MaintenancePage() {
       </div>
 
       {adding && (
-        <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl p-6">
-          <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2">
-            <span className="material-symbols-outlined text-amber-400 text-[18px]">engineering</span>
+        <div className={`${card} rounded-2xl p-6`}>
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-5 flex items-center gap-2">
+            <span className="material-symbols-outlined text-amber-500 dark:text-amber-400 text-[18px]">engineering</span>
             Yeni Bakım Kaydı
           </h3>
           <form onSubmit={handleCreate} className="space-y-4 max-w-xl">
@@ -97,13 +98,13 @@ export default function MaintenancePage() {
         {records.map(record => {
           const status = getStatus(record.next_maintenance_date);
           return (
-            <div key={record.id} className="bg-zinc-900 border border-white/[0.07] p-5 rounded-2xl flex flex-col group hover:border-amber-500/20 transition-all">
+            <div key={record.id} className={`${card} p-5 rounded-2xl flex flex-col group hover:border-amber-300 dark:hover:border-amber-500/20 transition-all`}>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-amber-400 text-xl">engineering</span>
+                  <div className="w-10 h-10 bg-amber-50 dark:bg-amber-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-amber-500 dark:text-amber-400 text-xl">engineering</span>
                   </div>
-                  <h3 className="font-bold text-sm text-white leading-snug line-clamp-2 pr-2">{record.maintenance_type}</h3>
+                  <h3 className="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2 pr-2">{record.maintenance_type}</h3>
                 </div>
                 {status && (
                   <span className={`flex-shrink-0 text-[10px] font-black px-2.5 py-1 rounded-full ${status.cls}`}>
@@ -112,32 +113,32 @@ export default function MaintenancePage() {
                 )}
               </div>
 
-              {record.description && <p className="text-xs text-white/40 mb-4 flex-1">{record.description}</p>}
+              {record.description && <p className="text-xs text-gray-400 dark:text-white/40 mb-4 flex-1">{record.description}</p>}
 
-              <div className="mt-auto pt-4 border-t border-white/[0.06] space-y-2">
+              <div className="mt-auto pt-4 border-t border-gray-100 dark:border-white/[0.06] space-y-2">
                 <div className="flex justify-between text-xs">
-                  <span className="text-white/40">Son Bakım</span>
-                  <span className="font-semibold text-white/70">
+                  <span className="text-gray-400 dark:text-white/40">Son Bakım</span>
+                  <span className="font-semibold text-gray-600 dark:text-white/70">
                     {record.last_maintenance_date ? new Date(record.last_maintenance_date).toLocaleDateString('tr-TR') : '—'}
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-white/40">Sonraki Bakım</span>
-                  <span className={`font-black ${status && status.days < 0 ? 'text-rose-400' : status && status.days <= 7 ? 'text-amber-400' : 'text-white'}`}>
+                  <span className="text-gray-400 dark:text-white/40">Sonraki Bakım</span>
+                  <span className={`font-black ${status && status.days < 0 ? 'text-rose-600 dark:text-rose-400' : status && status.days <= 7 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-900 dark:text-white'}`}>
                     {record.next_maintenance_date ? new Date(record.next_maintenance_date).toLocaleDateString('tr-TR') : '—'}
                   </span>
                 </div>
                 {status && status.days >= 0 && (
                   <div className="flex justify-between text-xs">
-                    <span className="text-white/40">Kalan</span>
-                    <span className="text-white/60 font-bold">{status.days} gün</span>
+                    <span className="text-gray-400 dark:text-white/40">Kalan</span>
+                    <span className="text-gray-500 dark:text-white/60 font-bold">{status.days} gün</span>
                   </div>
                 )}
               </div>
 
               {(user?.role === 'admin' || user?.role === 'manager') && (
                 <button onClick={() => handleDelete(record.id)}
-                  className="mt-4 self-end text-white/20 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1 text-xs">
+                  className="mt-4 self-end text-gray-300 dark:text-white/20 hover:text-rose-500 dark:hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1 text-xs">
                   <span className="material-symbols-outlined text-[16px]">delete</span> Sil
                 </button>
               )}
@@ -145,7 +146,7 @@ export default function MaintenancePage() {
           );
         })}
         {records.length === 0 && (
-          <div className="col-span-full bg-zinc-900 border border-white/[0.07] rounded-2xl p-12 text-center text-white/30">
+          <div className={`col-span-full ${card} rounded-2xl p-12 text-center text-gray-300 dark:text-white/30`}>
             <span className="material-symbols-outlined text-4xl mb-3 block">handyman</span>
             Henüz bakım kaydı bulunmuyor.
           </div>

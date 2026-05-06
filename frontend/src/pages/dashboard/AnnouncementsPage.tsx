@@ -3,8 +3,9 @@ import { announcementsApi } from '../../api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 
-const inp = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
-const lbl = "block text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2";
+const card = "bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/[0.07]";
+const inp = "w-full px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
+const lbl = "block text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-white/40 mb-2";
 
 export default function AnnouncementsPage() {
   const { user } = useAuth();
@@ -39,8 +40,8 @@ export default function AnnouncementsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-white">Duyurular</h1>
-          <p className="text-white/40 text-sm mt-1">Önemli apartman duyuruları ve bilgilendirmeler</p>
+          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">Duyurular</h1>
+          <p className="text-gray-400 dark:text-white/40 text-sm mt-1">Önemli apartman duyuruları ve bilgilendirmeler</p>
         </div>
         {(user?.role === 'admin' || user?.role === 'manager') && (
           <button onClick={() => setAdding(!adding)}
@@ -52,9 +53,9 @@ export default function AnnouncementsPage() {
       </div>
 
       {adding && (
-        <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl p-6">
-          <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2">
-            <span className="material-symbols-outlined text-pink-400 text-[18px]">campaign</span>
+        <div className={`${card} rounded-2xl p-6`}>
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-5 flex items-center gap-2">
+            <span className="material-symbols-outlined text-pink-500 dark:text-pink-400 text-[18px]">campaign</span>
             Yeni Duyuru Oluştur
           </h3>
           <form onSubmit={handleCreate} className="space-y-4 max-w-xl">
@@ -80,31 +81,31 @@ export default function AnnouncementsPage() {
 
       <div className="space-y-4">
         {announcements.map(ann => (
-          <div key={ann.id} className="bg-zinc-900 border border-white/[0.07] p-6 rounded-2xl group hover:border-pink-500/20 transition-all">
+          <div key={ann.id} className={`${card} p-6 rounded-2xl group hover:border-pink-200 dark:hover:border-pink-500/20 transition-all`}>
             <div className="flex justify-between items-start mb-3">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-pink-500/15 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="material-symbols-outlined text-pink-400 text-[16px]">campaign</span>
+                <div className="w-8 h-8 bg-pink-50 dark:bg-pink-500/15 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="material-symbols-outlined text-pink-500 dark:text-pink-400 text-[16px]">campaign</span>
                 </div>
-                <h3 className="font-black text-white text-base leading-tight">{ann.title}</h3>
+                <h3 className="font-black text-gray-900 dark:text-white text-base leading-tight">{ann.title}</h3>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                <span className="text-xs font-bold text-white/30 bg-white/5 px-3 py-1 rounded-full border border-white/[0.06]">
+                <span className="text-xs font-bold text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-3 py-1 rounded-full border border-gray-200 dark:border-white/[0.06]">
                   {new Date(ann.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </span>
                 {(user?.role === 'admin' || user?.role === 'manager') && (
                   <button onClick={() => handleDelete(ann.id)}
-                    className="text-white/20 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all p-1">
+                    className="text-gray-300 dark:text-white/20 hover:text-rose-500 dark:hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all p-1">
                     <span className="material-symbols-outlined text-[20px]">delete</span>
                   </button>
                 )}
               </div>
             </div>
-            <p className="text-white/60 leading-relaxed whitespace-pre-wrap text-sm pl-11">{ann.message}</p>
+            <p className="text-gray-500 dark:text-white/60 leading-relaxed whitespace-pre-wrap text-sm pl-11">{ann.message}</p>
           </div>
         ))}
         {announcements.length === 0 && (
-          <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl p-12 text-center text-white/30">
+          <div className={`${card} rounded-2xl p-12 text-center text-gray-300 dark:text-white/30`}>
             <span className="material-symbols-outlined text-4xl mb-3 block">campaign</span>
             Henüz bir duyuru bulunmuyor.
           </div>

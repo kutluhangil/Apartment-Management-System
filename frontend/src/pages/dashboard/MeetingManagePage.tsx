@@ -6,15 +6,16 @@ import { meetingStatusConfig, MEETING_TYPES } from '../../utils/meetings';
 interface Meeting { id: number; title: string; meeting_type: string; date: string; time: string; notes: string; decisions: string[]; attendee_count: number; status: string; }
 interface Apartment { id: number; number: number; owner_name: string; floor: number; }
 
-const inp = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
-const sel = "w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all";
-const lbl = "block text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2";
+const card = "bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/[0.07]";
+const inp = "w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
+const sel = "w-full bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all";
+const lbl = "block text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-white/40 mb-2";
 
-const statusDark: Record<string, string> = {
-  completed: 'bg-emerald-500/15 text-emerald-400',
-  scheduled: 'bg-sky-500/15 text-sky-400',
-  cancelled: 'bg-rose-500/15 text-rose-400',
-  archived:  'bg-zinc-700 text-white/40',
+const statusCls: Record<string, string> = {
+  completed: 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+  scheduled: 'bg-sky-50 dark:bg-sky-500/15 text-sky-700 dark:text-sky-400',
+  cancelled: 'bg-rose-50 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400',
+  archived:  'bg-gray-100 dark:bg-zinc-700 text-gray-500 dark:text-white/40',
 };
 
 export default function MeetingManagePage() {
@@ -55,17 +56,17 @@ export default function MeetingManagePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black tracking-tight text-white">Toplantı Yönetimi</h1>
-        <p className="text-white/40 text-sm mt-1">Yeni toplantılar oluşturun ve geçmiş kararları inceleyin.</p>
+        <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">Toplantı Yönetimi</h1>
+        <p className="text-gray-400 dark:text-white/40 text-sm mt-1">Yeni toplantılar oluşturun ve geçmiş kararları inceleyin.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Left: form + list */}
         <div className="lg:col-span-2 space-y-5">
           {/* Form */}
-          <div className="bg-zinc-900 border border-white/[0.07] p-6 rounded-2xl">
-            <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2">
-              <span className="material-symbols-outlined text-indigo-400 text-[18px]">add_circle</span>
+          <div className={`${card} p-6 rounded-2xl`}>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-5 flex items-center gap-2">
+              <span className="material-symbols-outlined text-indigo-500 dark:text-indigo-400 text-[18px]">add_circle</span>
               Yeni Toplantı Oluştur
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -100,7 +101,7 @@ export default function MeetingManagePage() {
                 <textarea className={`${inp} resize-none`} rows={3} placeholder="Gündem maddelerini buraya yazınız..." value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
               </div>
               <div>
-                <label className={lbl}>Alınan Kararlar <span className="text-white/20 normal-case font-normal">(her satıra bir karar)</span></label>
+                <label className={lbl}>Alınan Kararlar <span className="text-gray-300 dark:text-white/20 normal-case font-normal">(her satıra bir karar)</span></label>
                 <textarea className={`${inp} resize-none`} rows={3} placeholder="Her satıra bir karar yazın..." value={decisionsText} onChange={e => setDecisionsText(e.target.value)} />
               </div>
               <div className="flex justify-end">
@@ -113,36 +114,36 @@ export default function MeetingManagePage() {
           </div>
 
           {/* Meeting list */}
-          <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
-            <div className="p-5 border-b border-white/[0.07]">
-              <h3 className="font-bold text-white text-sm">Toplantı Kayıtları</h3>
+          <div className={`${card} rounded-2xl overflow-hidden`}>
+            <div className="p-5 border-b border-gray-200 dark:border-white/[0.07]">
+              <h3 className="font-bold text-gray-900 dark:text-white text-sm">Toplantı Kayıtları</h3>
             </div>
-            <div className="divide-y divide-white/[0.05]">
+            <div className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {meetings.length === 0 ? (
-                <div className="p-8 text-center text-white/30 text-sm">Henüz toplantı kaydı yok.</div>
+                <div className="p-8 text-center text-gray-400 dark:text-white/30 text-sm">Henüz toplantı kaydı yok.</div>
               ) : meetings.map(m => {
-                const scls = statusDark[m.status] || statusDark.archived;
+                const scls = statusCls[m.status] || statusCls.archived;
                 const slabel = (meetingStatusConfig[m.status] || meetingStatusConfig.archived).label;
                 return (
-                  <div key={m.id} className="p-5 hover:bg-white/[0.03] transition-colors">
+                  <div key={m.id} className="p-5 hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors">
                     <div className="flex justify-between items-start gap-3 mb-2">
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">{m.meeting_type}</span>
-                        <h4 className="font-bold text-white mt-0.5">{m.title}</h4>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-white/30">{m.meeting_type}</span>
+                        <h4 className="font-bold text-gray-900 dark:text-white mt-0.5">{m.title}</h4>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${scls}`}>{slabel}</span>
-                        <button onClick={() => handleDelete(m.id)} className="p-1 text-white/20 hover:text-rose-400 transition-colors">
+                        <button onClick={() => handleDelete(m.id)} className="p-1 text-gray-300 dark:text-white/20 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
                           <span className="material-symbols-outlined text-[18px]">delete</span>
                         </button>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-4 text-xs text-white/40">
+                    <div className="flex flex-wrap gap-4 text-xs text-gray-400 dark:text-white/40">
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">calendar_today</span>{new Date(m.date).toLocaleDateString('tr-TR')}</span>
                       {m.time && <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">schedule</span>{m.time}</span>}
                       <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">group</span>{m.attendee_count} Daire</span>
                     </div>
-                    {m.notes && <p className="text-sm text-white/50 mt-2 line-clamp-2">{m.notes}</p>}
+                    {m.notes && <p className="text-sm text-gray-500 dark:text-white/50 mt-2 line-clamp-2">{m.notes}</p>}
                   </div>
                 );
               })}
@@ -153,22 +154,22 @@ export default function MeetingManagePage() {
         {/* Right sidebar */}
         <div className="space-y-5">
           {/* Apartments list */}
-          <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
-            <div className="p-5 border-b border-white/[0.07] flex items-center justify-between">
-              <h3 className="font-bold text-white text-sm">Daire Listesi</h3>
-              <span className="text-xs bg-white/5 border border-white/10 px-2.5 py-1 rounded-full text-white/40 font-bold">18 Daire</span>
+          <div className={`${card} rounded-2xl overflow-hidden`}>
+            <div className="p-5 border-b border-gray-200 dark:border-white/[0.07] flex items-center justify-between">
+              <h3 className="font-bold text-gray-900 dark:text-white text-sm">Daire Listesi</h3>
+              <span className="text-xs bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 px-2.5 py-1 rounded-full text-gray-500 dark:text-white/40 font-bold">18 Daire</span>
             </div>
-            <div className="divide-y divide-white/[0.05] max-h-80 overflow-y-auto">
+            <div className="divide-y divide-gray-100 dark:divide-white/[0.05] max-h-80 overflow-y-auto">
               {apartments.map(apt => (
-                <div key={apt.id} className="p-3.5 flex items-center gap-3 hover:bg-white/[0.03] transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-300 flex items-center justify-center text-xs font-black flex-shrink-0">
+                <div key={apt.id} className="p-3.5 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 flex items-center justify-center text-xs font-black flex-shrink-0">
                     {String(apt.number).padStart(2, '0')}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{apt.owner_name}</p>
-                    <p className="text-xs text-white/30">Kat {apt.floor}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{apt.owner_name}</p>
+                    <p className="text-xs text-gray-400 dark:text-white/30">Kat {apt.floor}</p>
                   </div>
-                  <span className="material-symbols-outlined text-white/20 text-lg">chevron_right</span>
+                  <span className="material-symbols-outlined text-gray-300 dark:text-white/20 text-lg">chevron_right</span>
                 </div>
               ))}
             </div>

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import AuthGuard from './components/ui/AuthGuard';
 
 // Public
@@ -32,12 +33,13 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
+      <ThemeProvider>
       <AuthProvider>
         <Toaster
           position="top-right"
           toastOptions={{
             style: { fontFamily: 'Inter, sans-serif', fontSize: '14px', borderRadius: '12px' },
-            success: { iconTheme: { primary: '#111111', secondary: '#fff' } },
+            success: { iconTheme: { primary: '#6366f1', secondary: '#fff' } },
           }}
         />
         <Routes>
@@ -64,6 +66,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

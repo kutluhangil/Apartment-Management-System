@@ -3,8 +3,9 @@ import { documentsApi } from '../../api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 
-const inp = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
-const lbl = "block text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2";
+const card = "bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/[0.07]";
+const inp = "w-full px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400/30 transition-all";
+const lbl = "block text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-white/40 mb-2";
 
 const docIcon = (url: string) => {
   if (!url) return 'description';
@@ -55,8 +56,8 @@ export default function DocumentsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-white">Belgeler Arşivi</h1>
-          <p className="text-white/40 text-sm mt-1">Yönetim planı, sözleşmeler ve tutanaklar</p>
+          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">Belgeler Arşivi</h1>
+          <p className="text-gray-400 dark:text-white/40 text-sm mt-1">Yönetim planı, sözleşmeler ve tutanaklar</p>
         </div>
         {(user?.role === 'admin' || user?.role === 'manager') && (
           <button onClick={() => setAdding(!adding)}
@@ -68,16 +69,16 @@ export default function DocumentsPage() {
       </div>
 
       {adding && (
-        <div className="bg-zinc-900 border border-white/[0.07] rounded-2xl p-6">
-          <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2">
-            <span className="material-symbols-outlined text-indigo-400 text-[18px]">upload_file</span>
+        <div className={`${card} rounded-2xl p-6`}>
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-5 flex items-center gap-2">
+            <span className="material-symbols-outlined text-indigo-500 dark:text-indigo-400 text-[18px]">upload_file</span>
             Yeni Belge Yükle
           </h3>
           <form onSubmit={handleUpload} className="space-y-4 max-w-xl">
             <div>
               <label className={lbl}>Dosya (PDF, DOCX, JPG, PNG)</label>
               <input required type="file" accept=".pdf,.doc,.docx,.jpg,.png"
-                className="w-full text-sm text-white/60 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30 cursor-pointer"
+                className="w-full text-sm text-gray-500 dark:text-white/60 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-indigo-50 dark:file:bg-indigo-500/20 file:text-indigo-600 dark:file:text-indigo-300 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-500/30 cursor-pointer"
                 onChange={e => setFile(e.target.files?.[0] || null)} />
             </div>
             <div>
@@ -99,25 +100,25 @@ export default function DocumentsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {documents.map(doc => (
-          <div key={doc.id} className="bg-zinc-900 border border-white/[0.07] p-5 rounded-2xl flex flex-col group hover:border-indigo-500/20 transition-all">
+          <div key={doc.id} className={`${card} p-5 rounded-2xl flex flex-col group hover:border-indigo-300 dark:hover:border-indigo-500/20 transition-all`}>
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 bg-indigo-500/15 text-indigo-300 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 rounded-xl flex items-center justify-center flex-shrink-0">
                 <span className="material-symbols-outlined text-2xl">{docIcon(doc.file_url || '')}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-sm text-white truncate" title={doc.title}>{doc.title}</h3>
-                <p className="text-xs text-white/30 mt-0.5">{new Date(doc.upload_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <h3 className="font-bold text-sm text-gray-900 dark:text-white truncate" title={doc.title}>{doc.title}</h3>
+                <p className="text-xs text-gray-400 dark:text-white/30 mt-0.5">{new Date(doc.upload_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
               </div>
             </div>
-            {doc.description && <p className="text-xs text-white/40 mb-4 line-clamp-2 flex-1">{doc.description}</p>}
-            <div className="mt-auto flex items-center justify-between pt-4 border-t border-white/[0.06]">
+            {doc.description && <p className="text-xs text-gray-400 dark:text-white/40 mb-4 line-clamp-2 flex-1">{doc.description}</p>}
+            <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/[0.06]">
               <a href={doc.file_url} target="_blank" rel="noreferrer"
-                className="text-sm font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
+                className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 flex items-center gap-1 transition-colors">
                 <span className="material-symbols-outlined text-[18px]">download</span> İndir
               </a>
               {(user?.role === 'admin' || user?.role === 'manager') && (
                 <button onClick={() => handleDelete(doc.id)}
-                  className="text-white/20 hover:text-rose-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1">
+                  className="text-gray-300 dark:text-white/20 hover:text-rose-500 dark:hover:text-rose-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1">
                   <span className="material-symbols-outlined text-[18px]">delete</span>
                 </button>
               )}
@@ -125,7 +126,7 @@ export default function DocumentsPage() {
           </div>
         ))}
         {documents.length === 0 && (
-          <div className="col-span-full bg-zinc-900 border border-white/[0.07] rounded-2xl p-12 text-center text-white/30">
+          <div className={`col-span-full ${card} rounded-2xl p-12 text-center text-gray-300 dark:text-white/30`}>
             <span className="material-symbols-outlined text-4xl mb-3 block">folder_open</span>
             Henüz arşivde belge yok.
           </div>
