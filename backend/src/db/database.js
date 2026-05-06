@@ -72,6 +72,28 @@ const initDb = async () => {
     }
   }
 
+  // Data migration: room_type column was added with DEFAULT '3+1', so existing
+  // apartments all got 3+1. Fix the 8 apartments that should be 2+1.
+  // Guard: only run when no 2+1 apartment exists yet.
+  try {
+    const r = await db.execute("SELECT COUNT(*) as cnt FROM apartments WHERE room_type = '2+1'");
+    if (Number(r.rows[0].cnt) === 0) {
+      const twoPlus1Numbers = [1, 2, 3, 6, 9, 12, 15, 18];
+      await db.execute(`UPDATE apartments SET room_type = '2+1' WHERE number IN (${twoPlus1Numbers.join(',')})`);
+      console.log('[migration] Fixed room_type to 2+1 for apartments:', twoPlus1Numbers.join(', '));
+
+      // Fix any existing payment amounts that were created while all room_types were 3+1
+      const { rowsAffected } = await db.execute(`
+        UPDATE aidat_payments SET amount = 800
+        WHERE amount = 1000
+          AND apartment_id IN (SELECT id FROM apartments WHERE number IN (${twoPlus1Numbers.join(',')}))
+      `);
+      if (rowsAffected > 0) console.log(`[migration] Fixed ${rowsAffected} payment amounts from 1000 to 800`);
+    }
+  } catch (e) {
+    console.error('[migration] Room type data migration failed:', e.message);
+  }
+
   if (isLocal) {
     await db.execute('PRAGMA foreign_keys=ON');
   }
