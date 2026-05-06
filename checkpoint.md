@@ -6,11 +6,52 @@
 ## ⚡ Önemli Mimari Değişiklik (Mayıs 2026)
 Site, tek "her-şey-burada" landing sayfasına dönüştürüldü.
 - **Sakinler giriş yapmaz** — yalnızca admin (Kutluhan) ve manager (Murat) login olur.
-- **Public landing page** (`/`) tüm bilgileri gösterir: aidat, gider, kasa, toplantı, duyuru, bakım, daireler, tarihçe.
+- **Public landing page** (`/`) tüm bilgileri gösterir: aidat, gider, kasa, toplantı, duyuru, bakım, IBAN.
 - **`sakin` rolü tamamen kaldırıldı.**
 - Eski `/finansal` ve `/toplanti-notlari` sayfaları silindi (landing'in bölümleri oldu).
-- GET API endpointleri public yapıldı: aidats, apartments, announcements, maintenance, analytics.
+- GET API endpointleri public yapıldı: aidats, apartments, announcements, maintenance, analytics, settings.
 - Mutation endpointleri (POST/PUT/DELETE) hâlâ admin/manager auth gerektirir.
+
+## 🎨 UI Refactor v2 (Mayıs 2026)
+Apple "bento grid" tasarım, renkli gradientler.
+- **Desktop**: 12×6 grid, 5 kart (Cash + Aidat + Toplantı + Duyuru + IBAN/Bakım), tek viewport ekran (h-screen).
+- **Mobile**: dikey stack, kompakt.
+- Her kart kendi gradientine sahip: indigo, emerald, sky, pink, amber.
+- Siyah arka plan, beyaz yazı, parlak renkli kartlar (Apple Watch/Fitness+ stili).
+- Login sayfası glassmorphic (blur + decorative blobs).
+
+## 🆕 Yeni Özellikler (Mayıs 2026)
+
+### PWA
+- `frontend/public/manifest.json` — uygulama metadata
+- `frontend/public/sw.js` — minimal service worker (assets stale-while-revalidate, API network-first)
+- `main.tsx`'te production'da otomatik kayıt
+- Telefondan "Ana Ekrana Ekle" → uygulama gibi açılır
+
+### IBAN / Aidat Ödeme Kartı
+- Landing page'de turuncu gradient kart
+- Tek tıkla IBAN kopyalama (clipboard API)
+- IBAN, hesap adı, banka adı env değişkenlerinden okunur:
+  - `APARTMENT_IBAN`, `APARTMENT_ACCOUNT_NAME`, `APARTMENT_BANK_NAME`
+- Public endpoint: `GET /api/settings`
+
+### Cloud Storage (Vercel Blob)
+- `expenses.js` artık Blob desteği var (documents.js'teki pattern)
+- `BLOB_READ_WRITE_TOKEN` set edilirse fatura PDF'leri Vercel Blob'a yüklenir
+- Yoksa Docker volume'a düşer (geriye dönük uyumlu)
+
+### Aidat Hatırlatma Scripti
+- `backend/src/scripts/send-reminder.js`
+- Mevcut ay aidat dönemini garantiye alır (yoksa oluşturur)
+- Ödenmemiş daireleri listeler
+- 3 gönderim kanalı destekler:
+  - Telegram bot (`TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`)
+  - Generic webhook (`REMINDER_WEBHOOK_URL`)
+  - Konsol (her zaman)
+- Cron örneği:
+  ```
+  0 9 1 * * cd /home/kutluhan/Apartment-Management-System/backend && /usr/bin/node src/scripts/send-reminder.js >> ~/reminder.log 2>&1
+  ```
 
 ---
 

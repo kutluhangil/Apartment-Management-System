@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Clean up legacy plaintext password storage from old version
     localStorage.removeItem('rememberedPassword');
     const savedEmail = localStorage.getItem('rememberedEmail');
     if (savedEmail) {
@@ -30,10 +29,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.email || !form.password) {
-      toast.error('E-posta ve şifre gereklidir.');
-      return;
-    }
+    if (!form.email || !form.password) return toast.error('E-posta ve şifre gereklidir.');
     setLoading(true);
     try {
       const res = await authApi.login(form.email, form.password);
@@ -50,34 +46,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafaf9] antialiased">
+    <div className="min-h-screen flex flex-col bg-black text-white antialiased relative overflow-hidden">
+      {/* Decorative gradient blobs */}
+      <div className="absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 opacity-30 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-[480px] h-[480px] rounded-full bg-gradient-to-tl from-pink-500 to-rose-600 opacity-25 blur-3xl pointer-events-none" />
+
       {/* Top bar */}
-      <div className="px-5 sm:px-8 h-14 flex items-center">
-        <Link to="/" className="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#111] transition-colors">
+      <div className="px-5 sm:px-8 h-14 flex items-center relative z-10">
+        <Link to="/" className="flex items-center gap-1.5 text-sm font-medium text-white/50 hover:text-white transition-colors">
           <span className="material-symbols-outlined text-lg">chevron_left</span>
           Ana Sayfa
         </Link>
       </div>
 
       {/* Main */}
-      <div className="flex-1 flex items-center justify-center px-5 pb-20">
-        <div className="w-full max-w-[380px]">
+      <div className="flex-1 flex items-center justify-center px-5 pb-20 relative z-10">
+        <div className="w-full max-w-[400px]">
           {/* Logo + title */}
-          <div className="text-center mb-10">
-            <div className="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <span className="material-symbols-outlined text-white text-2xl">apartment</span>
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl shadow-purple-500/30">
+              <span className="material-symbols-outlined text-white text-3xl">apartment</span>
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-[#111]">Yönetici Girişi</h1>
-            <p className="text-sm text-slate-400 mt-1.5">Cumhuriyet Apartmanı yönetim paneli</p>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+              Yönetici Girişi
+            </h1>
+            <p className="text-sm text-white/50 mt-2">Cumhuriyet Apartmanı yönetim paneli</p>
           </div>
 
-          {/* Form */}
+          {/* Form — glassmorphic card */}
           <form
             onSubmit={handleSubmit}
-            className="bg-white rounded-3xl border border-slate-100 shadow-sm p-7 space-y-5"
+            className="bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-3xl p-7 space-y-5 shadow-2xl"
           >
             <div>
-              <label className="block text-[13px] font-semibold text-slate-700 mb-2">
+              <label className="block text-[12px] font-bold uppercase tracking-wider text-white/50 mb-2">
                 E-posta
               </label>
               <input
@@ -85,14 +87,14 @@ export default function LoginPage() {
                 value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                 placeholder="ornek@cumhuriyet.com"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#111]/15 focus:border-[#111]/40 transition-all"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400/40 transition-all"
                 autoComplete="email"
                 autoFocus
               />
             </div>
 
             <div className="relative">
-              <label className="block text-[13px] font-semibold text-slate-700 mb-2">
+              <label className="block text-[12px] font-bold uppercase tracking-wider text-white/50 mb-2">
                 Şifre
               </label>
               <input
@@ -100,13 +102,13 @@ export default function LoginPage() {
                 value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 pr-12 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#111]/15 focus:border-[#111]/40 transition-all"
+                className="w-full px-4 py-3 pr-12 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400/40 transition-all"
                 autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-[37px] text-slate-400 hover:text-[#111] transition-colors p-1"
+                className="absolute right-3.5 top-[42px] text-white/40 hover:text-white transition-colors p-1"
                 tabIndex={-1}
               >
                 <span className="material-symbols-outlined text-xl">
@@ -120,15 +122,15 @@ export default function LoginPage() {
                 type="checkbox"
                 checked={rememberEmail}
                 onChange={e => setRememberEmail(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-[#111] focus:ring-[#111]/20"
+                className="h-4 w-4 rounded border-white/20 bg-white/5"
               />
-              <span className="text-[13px] text-slate-600">E-postamı hatırla</span>
+              <span className="text-[13px] text-white/70">E-postamı hatırla</span>
             </label>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#111] text-white py-3 rounded-xl text-sm font-bold hover:bg-[#333] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white py-3.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
             >
               {loading ? (
                 <>
@@ -136,12 +138,15 @@ export default function LoginPage() {
                   Giriş yapılıyor…
                 </>
               ) : (
-                'Giriş Yap'
+                <>
+                  Giriş Yap
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
+                </>
               )}
             </button>
           </form>
 
-          <p className="text-center text-[11px] text-slate-300 mt-6">
+          <p className="text-center text-[11px] text-white/30 mt-6">
             Yalnızca yetkili yöneticiler giriş yapabilir.
           </p>
         </div>

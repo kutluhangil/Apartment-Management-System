@@ -63,6 +63,7 @@ app.use('/api/announcements', require('./routes/announcements'));
 app.use('/api/documents', require('./routes/documents'));
 app.use('/api/maintenance', require('./routes/maintenance'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/settings', require('./routes/settings'));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', name: 'Cumhuriyet Apartmanı API' }));
 
 // ─── 404 Not Found handler ────────────────────────────────────────────────────

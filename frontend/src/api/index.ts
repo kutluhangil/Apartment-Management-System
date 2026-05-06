@@ -96,6 +96,10 @@ export const documentsApi = {
   delete: (id: number) => api.delete(`/documents/${id}`),
 };
 
+export const settingsApi = {
+  get: () => api.get('/settings'),
+};
+
 export const maintenanceApi = {
   getAll: () => api.get('/maintenance'),
   create: (data: any) => api.post('/maintenance', data),

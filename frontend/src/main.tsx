@@ -22,6 +22,13 @@ import MaintenancePage from './pages/dashboard/MaintenancePage';
 
 import './index.css';
 
+// PWA — register service worker (production only)
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
