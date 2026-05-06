@@ -47,9 +47,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white antialiased relative overflow-hidden">
-      {/* Decorative gradient blobs */}
-      <div className="absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 opacity-30 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-[480px] h-[480px] rounded-full bg-gradient-to-tl from-pink-500 to-rose-600 opacity-25 blur-3xl pointer-events-none" />
+      {/* Decorative gradient blobs — match landing card palette */}
+      <div className="absolute -top-60 -left-60 w-[640px] h-[640px] rounded-full bg-gradient-to-br from-indigo-600 via-violet-700 to-purple-800 opacity-25 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 -right-60 w-[520px] h-[520px] rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 opacity-15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-60 left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tl from-pink-500 to-rose-600 opacity-20 blur-3xl pointer-events-none" />
 
       {/* Top bar */}
       <div className="px-5 sm:px-8 h-14 flex items-center relative z-10">
@@ -64,8 +65,8 @@ export default function LoginPage() {
         <div className="w-full max-w-[400px]">
           {/* Logo + title */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl shadow-purple-500/30">
-              <span className="material-symbols-outlined text-white text-3xl">apartment</span>
+            <div className="w-20 h-20 bg-gradient-to-br from-indigo-400 via-violet-500 to-purple-600 rounded-[28px] flex items-center justify-center mx-auto mb-5 shadow-2xl shadow-purple-500/40">
+              <span className="material-symbols-outlined text-white" style={{ fontSize: '44px' }}>apartment</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
               Yönetici Girişi

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
@@ -40,7 +40,7 @@ function Header() {
   );
 }
 
-// ─── Card wrapper ───────────────────────────────────────────────────────────
+// ─── Card — Apple TV 3D tilt ─────────────────────────────────────────────────
 function Card({
   className = '',
   gradient,
@@ -52,9 +52,32 @@ function Card({
   children: React.ReactNode;
   pattern?: boolean;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transition = 'transform 0.12s ease-out';
+    el.style.transform = `perspective(900px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) scale(1.03)`;
+  };
+
+  const onMouseLeave = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+    el.style.transform = '';
+  };
+
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl text-white shadow-lg shadow-black/10 transition-all hover:shadow-xl hover:scale-[1.005] ${gradient} ${className}`}
+      ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ willChange: 'transform' }}
+      className={`relative overflow-hidden rounded-3xl text-white shadow-lg shadow-black/20 ${gradient} ${className}`}
     >
       {pattern && (
         <>
@@ -152,15 +175,38 @@ export default function LandingPage() {
       <main className="flex-1 overflow-y-auto lg:overflow-hidden">
         <div className="h-full max-w-[1500px] mx-auto p-3 sm:p-4 lg:p-5">
           {/*
-            Bento grid:
-            mobile: single column stack (scrollable)
-            lg+: 12 col × 6 row, all visible without scroll
+            Bento grid — desktop: 12 col × 6 row, no scroll
+            mobile: single column stack, scrollable
           */}
           <div className="lg:h-full grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-6 gap-3 sm:gap-4">
 
+            {/* ── 0. LOGO (dark glass identity card) ───────────────── */}
+            <Card
+              className="lg:col-span-3 lg:row-span-3 min-h-[160px] lg:min-h-0"
+              gradient="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 border border-white/10"
+              pattern
+            >
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-400 via-violet-500 to-purple-600 rounded-[22px] sm:rounded-[28px] flex items-center justify-center shadow-2xl shadow-purple-500/40 mb-4">
+                  <span className="material-symbols-outlined text-white" style={{ fontSize: '44px' }}>apartment</span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white leading-tight mb-1">
+                  Cumhuriyet<br />Apartmanı
+                </h1>
+                <p className="text-[11px] font-semibold text-white/40 tracking-widest uppercase mb-5">
+                  18 Daire · İzmir
+                </p>
+                <div className="flex gap-2">
+                  <span className="w-2 h-2 rounded-full bg-indigo-400/80" />
+                  <span className="w-2 h-2 rounded-full bg-violet-400/80" />
+                  <span className="w-2 h-2 rounded-full bg-purple-400/80" />
+                </div>
+              </div>
+            </Card>
+
             {/* ── 1. CASH HERO (indigo→purple) ────────────────────── */}
             <Card
-              className="lg:col-span-7 lg:row-span-3 min-h-[260px] lg:min-h-0"
+              className="lg:col-span-5 lg:row-span-3 min-h-[260px] lg:min-h-0"
               gradient="bg-gradient-to-br from-indigo-500 via-violet-600 to-purple-700"
               pattern
             >
@@ -172,7 +218,7 @@ export default function LandingPage() {
               </div>
               <div className="my-2 lg:my-3">
                 <p className="text-[11px] font-semibold text-white/60 mb-1">Net Bakiye</p>
-                <p className="text-5xl sm:text-6xl lg:text-7xl xl:text-[88px] font-black tracking-[-0.04em] leading-[0.95]">
+                <p className="text-5xl sm:text-6xl lg:text-7xl xl:text-[80px] font-black tracking-[-0.04em] leading-[0.95]">
                   {formatCurrency(summary.balance)}
                 </p>
                 <div className="grid grid-cols-2 gap-3 pt-3 mt-3 border-t border-white/15">
@@ -190,7 +236,6 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-              {/* Recent expenses inline */}
               {recentExpenses.length > 0 && (
                 <div className="mt-auto bg-white/10 rounded-xl p-2.5 sm:p-3">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1.5 flex items-center gap-1">
@@ -213,7 +258,7 @@ export default function LandingPage() {
 
             {/* ── 2. AIDAT STATUS (emerald→teal) ────────────────────── */}
             <Card
-              className="lg:col-span-5 lg:row-span-3 min-h-[260px] lg:min-h-0"
+              className="lg:col-span-4 lg:row-span-3 min-h-[260px] lg:min-h-0"
               gradient="bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600"
               pattern
             >
@@ -254,7 +299,6 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* 18 daire mini grid */}
               <div className="grid grid-cols-9 gap-1 mt-auto">
                 {payments.map(p => {
                   const color = p.status === 'paid' ? 'bg-white' : p.status === 'pending' ? 'bg-amber-300' : 'bg-rose-400';
@@ -270,7 +314,6 @@ export default function LandingPage() {
                 })}
               </div>
 
-              {/* Period selector — only first 3 */}
               {aidats.length > 1 && (
                 <div className="flex gap-1 mt-3 -mb-1 overflow-x-auto">
                   {aidats.slice(0, 4).map(a => (
@@ -384,7 +427,6 @@ export default function LandingPage() {
                 IBAN'ı Kopyala
               </button>
 
-              {/* Next maintenance mini */}
               {nextMaintenance && (
                 <div className="bg-white/10 rounded-xl p-3 mt-auto">
                   <div className="flex items-center justify-between mb-1">
@@ -416,7 +458,6 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* Footer — minimal */}
       <footer className="flex-shrink-0 px-4 sm:px-6 py-2.5 border-t border-white/5 bg-black/95 text-[10px] sm:text-[11px] text-white/40 flex justify-between items-center">
         <span>© {new Date().getFullYear()} Cumhuriyet Apartmanı</span>
         <span className="hidden sm:inline">Şeffaf yönetim · Dijital takip</span>
